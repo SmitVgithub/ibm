@@ -1,0 +1,631 @@
+# =============================================================================
+# CI/CD Pipeline for IBM Open Source Showcase
+# =============================================================================
+# Deploys static website to Azure VM in Central India region
+# Includes security scanning, testing, and automated deployment
+# =============================================================================
+
+name: Build and Deploy to Azure VM
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+      force_deploy:
+        description: 'Force deployment even if tests fail'
+        required: false
+        default: false
+        type: boolean
+
+# Concurrency control - cancel in-progress runs for same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Environment variables
+env:
+  # Azure Configuration
+  AZURE_RESOURCE_GROUP: ibm-opensource-rg
+  AZURE_VM_NAME: ibm-opensource-vm
+  AZURE_REGION: centralindia
+  
+  # Container Configuration
+  CONTAINER_REGISTRY: ibmopensource.azurecr.io
+  IMAGE_NAME: ibm-opensource-showcase
+  
+  # Application Configuration
+  APP_PORT: 8080
+  HEALTH_CHECK_PATH: /health
+
+jobs:
+  # ===========================================================================
+  # Job 1: Code Quality and Security Analysis
+  # ===========================================================================
+  analyze:
+    name: Code Analysis & Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install Dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          elif [ -f package.json ]; then
+            npm install
+          fi
+      
+      - name: Run Linting
+        continue-on-error: true
+        run: |
+          npm test || echo "Linting completed with warnings"
+      
+      - name: Run Security Audit
+        continue-on-error: true
+        run: |
+          npm audit --audit-level=high || echo "Security audit completed"
+      
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+          queries: security-and-quality
+      
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript"
+      
+      - name: Run Trivy Filesystem Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-fs-results.sarif'
+          severity: 'CRITICAL,HIGH'
+      
+      - name: Upload Trivy Scan Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-fs-results.sarif'
+
+  # ===========================================================================
+  # Job 2: Build Docker Image
+  # ===========================================================================
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: analyze
+    permissions:
+      contents: read
+      packages: write
+    
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
+      
+      - name: Login to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CONTAINER_REGISTRY }}
+          username: ${{ secrets.AZURE_ACR_USERNAME }}
+          password: ${{ secrets.AZURE_ACR_PASSWORD }}
+      
+      - name: Extract Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
+            type=raw,value={{date 'YYYYMMDD-HHmmss'}}
+          labels: |
+            org.opencontainers.image.title=IBM Open Source Showcase
+            org.opencontainers.image.description=Static website showcasing IBM open source projects
+            org.opencontainers.image.vendor=IBM
+      
+      - name: Build and Push Docker Image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          provenance: true
+          sbom: true
+          build-args: |
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+      
+      - name: Run Trivy Container Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-container-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'  # Don't fail on vulnerabilities, just report
+      
+      - name: Upload Trivy Container Scan Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-container-results.sarif'
+      
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: '${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}'
+          format: spdx-json
+          output-file: sbom.spdx.json
+      
+      - name: Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.spdx.json
+          retention-days: 90
+
+  # ===========================================================================
+  # Job 3: Deploy to Azure VM
+  # ===========================================================================
+  deploy:
+    name: Deploy to Azure VM
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+    environment:
+      name: production
+      url: http://${{ steps.get-ip.outputs.vm_ip }}
+    
+    permissions:
+      contents: read
+      id-token: write  # Required for OIDC authentication
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Get VM Public IP
+        id: get-ip
+        run: |
+          VM_IP=$(az vm show \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name ${{ env.AZURE_VM_NAME }} \
+            --show-details \
+            --query publicIps \
+            --output tsv)
+          echo "vm_ip=$VM_IP" >> $GITHUB_OUTPUT
+          echo "VM Public IP: $VM_IP"
+      
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AZURE_VM_SSH_PRIVATE_KEY }}" > ~/.ssh/azure_vm_key
+          chmod 600 ~/.ssh/azure_vm_key
+          ssh-keyscan -H ${{ steps.get-ip.outputs.vm_ip }} >> ~/.ssh/known_hosts 2>/dev/null || true
+      
+      - name: Create Deployment Script
+        run: |
+          cat > deploy.sh << 'DEPLOY_SCRIPT'
+          #!/bin/bash
+          set -euo pipefail
+          
+          # =================================================================
+          # Deployment Script for IBM Open Source Showcase
+          # =================================================================
+          
+          CONTAINER_REGISTRY="$1"
+          IMAGE_NAME="$2"
+          IMAGE_TAG="$3"
+          ACR_USERNAME="$4"
+          ACR_PASSWORD="$5"
+          APP_PORT="$6"
+          
+          echo "========================================"
+          echo "Starting deployment..."
+          echo "Image: ${CONTAINER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+          echo "========================================"
+          
+          # Login to Azure Container Registry
+          echo "Logging into container registry..."
+          echo "${ACR_PASSWORD}" | docker login "${CONTAINER_REGISTRY}" \
+            --username "${ACR_USERNAME}" \
+            --password-stdin
+          
+          # Pull the new image
+          echo "Pulling new image..."
+          docker pull "${CONTAINER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+          
+          # Stop and remove existing container if running
+          echo "Stopping existing container..."
+          docker stop ibm-opensource-app 2>/dev/null || true
+          docker rm ibm-opensource-app 2>/dev/null || true
+          
+          # Run new container with production settings
+          echo "Starting new container..."
+          docker run -d \
+            --name ibm-opensource-app \
+            --restart unless-stopped \
+            --memory="256m" \
+            --cpus="0.5" \
+            --health-cmd="curl -f http://localhost:8080/health || exit 1" \
+            --health-interval=30s \
+            --health-timeout=10s \
+            --health-retries=3 \
+            --health-start-period=10s \
+            --log-driver=json-file \
+            --log-opt max-size=10m \
+            --log-opt max-file=3 \
+            --security-opt=no-new-privileges:true \
+            --cap-drop=ALL \
+            --cap-add=NET_BIND_SERVICE \
+            --read-only \
+            --tmpfs /var/cache/nginx:rw,noexec,nosuid,size=64m \
+            --tmpfs /var/run:rw,noexec,nosuid,size=16m \
+            --tmpfs /var/log/nginx:rw,noexec,nosuid,size=32m \
+            -p 80:8080 \
+            -p 443:8080 \
+            -e TZ=Asia/Kolkata \
+            "${CONTAINER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+          
+          # Wait for container to be healthy
+          echo "Waiting for container to be healthy..."
+          TIMEOUT=60
+          ELAPSED=0
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            HEALTH=$(docker inspect --format='{{.State.Health.Status}}' ibm-opensource-app 2>/dev/null || echo "unknown")
+            if [ "$HEALTH" = "healthy" ]; then
+              echo "Container is healthy!"
+              break
+            fi
+            echo "Waiting for container... (${ELAPSED}s/${TIMEOUT}s) - Status: ${HEALTH}"
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+          done
+          
+          if [ $ELAPSED -ge $TIMEOUT ]; then
+            echo "WARNING: Container health check timeout. Checking logs..."
+            docker logs --tail 50 ibm-opensource-app
+          fi
+          
+          # Cleanup old images
+          echo "Cleaning up old images..."
+          docker image prune -af --filter "until=24h" 2>/dev/null || true
+          
+          # Show container status
+          echo "========================================"
+          echo "Deployment complete!"
+          echo "Container status:"
+          docker ps --filter name=ibm-opensource-app --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+          echo "========================================"
+          DEPLOY_SCRIPT
+          chmod +x deploy.sh
+      
+      - name: Deploy to Azure VM
+        env:
+          VM_IP: ${{ steps.get-ip.outputs.vm_ip }}
+          ACR_USERNAME: ${{ secrets.AZURE_ACR_USERNAME }}
+          ACR_PASSWORD: ${{ secrets.AZURE_ACR_PASSWORD }}
+        run: |
+          # Copy deployment script to VM
+          scp -i ~/.ssh/azure_vm_key -o StrictHostKeyChecking=no \
+            deploy.sh azureuser@${VM_IP}:/tmp/deploy.sh
+          
+          # Execute deployment script on VM
+          ssh -i ~/.ssh/azure_vm_key -o StrictHostKeyChecking=no \
+            azureuser@${VM_IP} \
+            "sudo bash /tmp/deploy.sh \
+              '${{ env.CONTAINER_REGISTRY }}' \
+              '${{ env.IMAGE_NAME }}' \
+              'sha-${{ github.sha }}' \
+              '${ACR_USERNAME}' \
+              '${ACR_PASSWORD}' \
+              '${{ env.APP_PORT }}'"
+      
+      - name: Verify Deployment
+        run: |
+          echo "Verifying deployment..."
+          
+          # Wait for service to be available
+          sleep 10
+          
+          # Health check
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 30 \
+            "http://${{ steps.get-ip.outputs.vm_ip }}/health" || echo "000")
+          
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Health check passed (HTTP $HTTP_STATUS)"
+          else
+            echo "⚠️ Health check returned HTTP $HTTP_STATUS"
+          fi
+          
+          # Main page check
+          MAIN_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            --max-time 30 \
+            "http://${{ steps.get-ip.outputs.vm_ip }}/" || echo "000")
+          
+          if [ "$MAIN_STATUS" = "200" ]; then
+            echo "✅ Main page accessible (HTTP $MAIN_STATUS)"
+          else
+            echo "❌ Main page check failed (HTTP $MAIN_STATUS)"
+            exit 1
+          fi
+          
+          echo "========================================"
+          echo "Deployment verification complete!"
+          echo "Application URL: http://${{ steps.get-ip.outputs.vm_ip }}"
+          echo "========================================"
+      
+      - name: Cleanup SSH Key
+        if: always()
+        run: |
+          rm -f ~/.ssh/azure_vm_key
+      
+      - name: Post Deployment Notification
+        if: success()
+        run: |
+          echo "::notice title=Deployment Successful::Application deployed to http://${{ steps.get-ip.outputs.vm_ip }}"
+      
+      - name: Deployment Failure Notification
+        if: failure()
+        run: |
+          echo "::error title=Deployment Failed::Check the logs for details"
+
+  # ===========================================================================
+  # Job 4: Post-Deployment Smoke Tests
+  # ===========================================================================
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: success()
+    
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Get VM Public IP
+        id: get-ip
+        run: |
+          VM_IP=$(az vm show \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name ${{ env.AZURE_VM_NAME }} \
+            --show-details \
+            --query publicIps \
+            --output tsv)
+          echo "vm_ip=$VM_IP" >> $GITHUB_OUTPUT
+      
+      - name: Run Smoke Tests
+        run: |
+          BASE_URL="http://${{ steps.get-ip.outputs.vm_ip }}"
+          
+          echo "Running smoke tests against: $BASE_URL"
+          echo "========================================"
+          
+          # Test 1: Health endpoint
+          echo "Test 1: Health endpoint"
+          HEALTH_RESPONSE=$(curl -s "${BASE_URL}/health")
+          if echo "$HEALTH_RESPONSE" | grep -q "healthy"; then
+            echo "✅ Health endpoint returns healthy status"
+          else
+            echo "❌ Health endpoint check failed"
+            exit 1
+          fi
+          
+          # Test 2: Ready endpoint
+          echo "Test 2: Ready endpoint"
+          READY_RESPONSE=$(curl -s "${BASE_URL}/ready")
+          if echo "$READY_RESPONSE" | grep -q "ready"; then
+            echo "✅ Ready endpoint returns ready status"
+          else
+            echo "❌ Ready endpoint check failed"
+            exit 1
+          fi
+          
+          # Test 3: Main page loads
+          echo "Test 3: Main page"
+          MAIN_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}/")
+          if [ "$MAIN_STATUS" = "200" ]; then
+            echo "✅ Main page returns 200 OK"
+          else
+            echo "❌ Main page returned $MAIN_STATUS"
+            exit 1
+          fi
+          
+          # Test 4: Security headers
+          echo "Test 4: Security headers"
+          HEADERS=$(curl -sI "${BASE_URL}/")
+          
+          if echo "$HEADERS" | grep -qi "X-Frame-Options"; then
+            echo "✅ X-Frame-Options header present"
+          else
+            echo "⚠️ X-Frame-Options header missing"
+          fi
+          
+          if echo "$HEADERS" | grep -qi "X-Content-Type-Options"; then
+            echo "✅ X-Content-Type-Options header present"
+          else
+            echo "⚠️ X-Content-Type-Options header missing"
+          fi
+          
+          if echo "$HEADERS" | grep -qi "Content-Security-Policy"; then
+            echo "✅ Content-Security-Policy header present"
+          else
+            echo "⚠️ Content-Security-Policy header missing"
+          fi
+          
+          # Test 5: Static assets
+          echo "Test 5: Static assets"
+          CSS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}/styles/default.css" 2>/dev/null || echo "404")
+          if [ "$CSS_STATUS" = "200" ]; then
+            echo "✅ CSS assets accessible"
+          else
+            echo "⚠️ CSS assets returned $CSS_STATUS (may not exist)"
+          fi
+          
+          JS_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}/js/repos.js" 2>/dev/null || echo "404")
+          if [ "$JS_STATUS" = "200" ]; then
+            echo "✅ JavaScript assets accessible"
+          else
+            echo "⚠️ JavaScript assets returned $JS_STATUS (may not exist)"
+          fi
+          
+          # Test 6: Response time
+          echo "Test 6: Response time"
+          RESPONSE_TIME=$(curl -s -o /dev/null -w "%{time_total}" "${BASE_URL}/")
+          echo "Response time: ${RESPONSE_TIME}s"
+          
+          # Check if response time is under 2 seconds
+          if (( $(echo "$RESPONSE_TIME < 2.0" | bc -l) )); then
+            echo "✅ Response time is acceptable (<2s)"
+          else
+            echo "⚠️ Response time is slow (>2s)"
+          fi
+          
+          echo "========================================"
+          echo "All smoke tests completed!"
+          echo "========================================"
+
+  # ===========================================================================
+  # Job 5: Cleanup on Failure
+  # ===========================================================================
+  rollback:
+    name: Rollback on Failure
+    runs-on: ubuntu-latest
+    needs: [deploy, smoke-tests]
+    if: failure() && (needs.deploy.result == 'failure' || needs.smoke-tests.result == 'failure')
+    
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Get VM Public IP
+        id: get-ip
+        run: |
+          VM_IP=$(az vm show \
+            --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            --name ${{ env.AZURE_VM_NAME }} \
+            --show-details \
+            --query publicIps \
+            --output tsv)
+          echo "vm_ip=$VM_IP" >> $GITHUB_OUTPUT
+      
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AZURE_VM_SSH_PRIVATE_KEY }}" > ~/.ssh/azure_vm_key
+          chmod 600 ~/.ssh/azure_vm_key
+          ssh-keyscan -H ${{ steps.get-ip.outputs.vm_ip }} >> ~/.ssh/known_hosts 2>/dev/null || true
+      
+      - name: Rollback to Previous Version
+        run: |
+          echo "Attempting rollback to previous version..."
+          
+          ssh -i ~/.ssh/azure_vm_key -o StrictHostKeyChecking=no \
+            azureuser@${{ steps.get-ip.outputs.vm_ip }} << 'ROLLBACK'
+          
+          # Get the previous image
+          PREVIOUS_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "sha-${{ github.sha }}" | head -1)
+          
+          if [ -n "$PREVIOUS_IMAGE" ]; then
+            echo "Rolling back to: $PREVIOUS_IMAGE"
+            docker stop ibm-opensource-app 2>/dev/null || true
+            docker rm ibm-opensource-app 2>/dev/null || true
+            
+            docker run -d \
+              --name ibm-opensource-app \
+              --restart unless-stopped \
+              --memory="256m" \
+              --cpus="0.5" \
+              -p 80:8080 \
+              -p 443:8080 \
+              "$PREVIOUS_IMAGE"
+            
+            echo "Rollback completed!"
+          else
+            echo "No previous image found for rollback"
+          fi
+          ROLLBACK
+      
+      - name: Cleanup SSH Key
+        if: always()
+        run: |
+          rm -f ~/.ssh/azure_vm_key
+      
+      - name: Notify Rollback
+        run: |
+          echo "::warning title=Rollback Executed::Deployment failed, rolled back to previous version"

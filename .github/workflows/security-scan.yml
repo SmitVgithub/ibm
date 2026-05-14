@@ -1,0 +1,3 @@
+# GitHub Actions workflow for automated security scanning
+# File: .github/workflows/security-scan.yml
+# TODO: Implement this file

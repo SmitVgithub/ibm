@@ -1,0 +1,3 @@
+# Ingress configuration for external access
+# File: infrastructure/kubernetes/ingress.yaml
+# TODO: Implement this file

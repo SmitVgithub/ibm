@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RideShare Platform - Architecture Blueprint</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #141416;
+            --bg-tertiary: #1c1c1f;
+            --bg-card: #1e1e21;
+            --border-color: #2a2a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --gradient-1: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-2: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 16px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px 24px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            padding: 0 8px;
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 24px;
+            left: 16px;
+            width: 228px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .theme-toggle-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--border-color);
+            border-radius: 12px;
+            position: relative;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s ease;
+        }
+
+        [data-theme="light"] .theme-toggle-switch {
+            background: var(--accent-blue);
+        }
+
+        [data-theme="light"] .theme-toggle-switch::after {
+            transform: translateX(20px);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 32px 48px;
+            max-width: 1400px;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 64px;
+        }
+
+        .section-header {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-blue { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .badge-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .badge-yellow { background: rgba(245, 158, 11, 0.15); color: var(--accent-yellow); }
+        .badge-red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .badge-purple { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1200px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container { display: none; }
+            .main-content { margin-left: 0; padding: 24px 16px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+        }
+
+        td {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Mermaid Diagrams */
+        .mermaid {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-tertiary);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            background: transparent;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 32px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -32px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            border: 3px solid var(--bg-primary);
+        }
+
+        .timeline-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .timeline-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Mockup Screens */
+        .mockup-container {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .mockup-header {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot.red { background: #ff5f57; }
+        .mockup-dot.yellow { background: #febc2e; }
+        .mockup-dot.green { background: #28c840; }
+
+        .mockup-title {
+            margin-left: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .mockup-content {
+            padding: 24px;
+            min-height: 400px;
+        }
+
+        /* Mobile Mockup */
+        .mobile-mockup {
+            width: 320px;
+            height: 640px;
+            background: var(--bg-card);
+            border-radius: 40px;
+            border: 8px solid var(--bg-tertiary);
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .mobile-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: var(--bg-tertiary);
+            border-radius: 0 0 20px 20px;
+        }
+
+        .mobile-content {
+            padding: 40px 16px 16px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Compliance Score */
+        .compliance-score {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: var(--bg-card);
+        }
+
+        .score-circle span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1a1a1d;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            color: #e1e1e6;
+            overflow-x: auto;
+        }
+
+        .code-key { color: #7dd3fc; }
+        .code-string { color: #86efac; }
+        .code-number { color: #fca5a5; }
+
+        /* Collapsible */
+        .collapsible {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+        }
+
+        .collapsible-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+        }
+
+        .collapsible-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .collapsible-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .collapsible-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible.open .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .collapsible.open .collapsible-content {
+            display: block;
+        }
+
+        /* Severity Indicators */
+        .severity-critical { color: var(--accent-red); }
+        .severity-high { color: var(--accent-yellow); }
+        .severity-medium { color: var(--accent-blue); }
+        .severity-low { color: var(--accent-green); }
+
+        /* Component List */
+        .component-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            background: var(--bg-card);
+        }
+
+        .component-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .component-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .component-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .component-kind {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            margin-left: auto;
+        }
+
+        /* Alert Box */
+        .alert {
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-critical {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .alert-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Chart Bars */
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .chart-label {
+            width: 120px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .chart-track {
+            flex: 1;
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .chart-fill {
+            height: 100%;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+        }
+
+        /* API Endpoint */
+        .api-endpoint {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .api-method {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .method-get { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .method-post { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
+        .method-put { background: rgba(245, 158, 11, 0.2); color: var(--accent-yellow); }
+        .method-patch { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
+        .method-delete { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+
+        .api-path {
+            font-family: monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .api-desc {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Env Variable */
+        .env-var {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .env-name {
+            font-family: monospace;
+            font-size: 13px;
+            color: var(--accent-cyan);
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .env-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .env-example {
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 16px;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <nav class="nav-container">
+        <div class="nav-logo">
+            <div class="nav-logo-icon">🚗</div>
+            <span class="nav-logo-text">RideShare</span>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Overview</div>
+            <a href="#executive-summary" class="nav-link active">
+                <span>📋</span> Executive Summary
+            </a>
+            <a href="#architecture" class="nav-link">
+                <span>🏗️</span> Architecture
+            </a>
+            <a href="#components" class="nav-link">
+                <span>🧩</span> Components
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Technical</div>
+            <a href="#tech-stack" class="nav-link">
+                <span>⚙️</span> Tech Stack
+            </a>
+            <a href="#scalability" class="nav-link">
+                <span>📈</span> Scalability
+            </a>
+            <a href="#security" class="nav-link">
+                <span>🔒</span> Security
+            </a>
+            <a href="#api" class="nav-link">
+                <span>🔌</span> API Reference
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">Design</div>
+            <a href="#mockups" class="nav-link">
+                <span>🎨</span> UI Mockups
+            </a>
+            <a href="#env-config" class="nav-link">
+                <span>🔧</span> Configuration
+            </a>
+        </div>
+
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <span class="theme-toggle-label">Dark Mode</span>
+            <div class="theme-toggle-switch"></div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- Executive Summary -->
+        <section id="executive-summary" class="section">
+            <div class="section-header">
+                <h1 class="section-title">Executive Summary</h1>
+                <p class="section-subtitle">RideShare Platform Architecture Blueprint - Comprehensive Technical Documentation</p>
+            </div>
+
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15);">🏢</div>
+                    <div class="stat-value">16</div>
+                    <div class="stat-label">Core Components</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15);">👥</div>
+                    <div class="stat-value">10K</div>
+                    <div class="stat-label">Concurrent Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15);">🚀</div>
+                    <div class="stat-value">1K</div>
+                    <div class="stat-label">Active Rides</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15);">⚡</div>
+                    <div class="stat-value">&lt;1s</div>
+                    <div class="stat-label">Latency Target</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Platform Overview</h3>
+                    <span class="card-badge badge-blue">Microservices</span>
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    The RideShare platform is a comprehensive ride-sharing solution designed to handle real-time ride matching, 
+                    location tracking, and payment processing. Built on a microservices architecture, it supports ride-sharing 
+                    with fare splitting, real-time WebSocket communication for location updates, and GDPR-compliant data handling.
+                </p>
+                <div class="grid-3">
+                    <div>
+                        <h4 style="font-size: 14px; color: var(--text-primary); margin-bottom: 8px;">Key Features</h4>
+                        <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 16px;">
+                            <li>Real-time driver tracking</li>
+                            <li>Intelligent ride matching</li>
+                            <li>Ride-sharing & fare splitting</li>
+                            <li>Multi-channel notifications</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 14px; color: var(--text-primary); margin-bottom: 8px;">Target Scale</h4>
+                        <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 16px;">
+                            <li>10,000 concurrent users</li>
+                            <li>1,000 active rides</li>
+                            <li>Sub-second latency</li>
+                            <li>99.9% availability</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 14px; color: var(--text-primary); margin-bottom: 8px;">Compliance</h4>
+                        <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 16px;">
+                            <li>GDPR compliant</li>
+                            <li>PCI-DSS for payments</li>
+                            <li>SOC2 readiness</li>
+                            <li>Data encryption at rest</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section id="architecture" class="section">
+            <div class="section-header">
+                <h1 class="section-title">System Architecture</h1>
+                <p class="section-subtitle">High-level architecture diagrams and data flow visualization</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('arch-overview')">Overview</button>
+                <button class="tab" onclick="showTab('arch-sequence')">Sequence Flow</button>
+                <button class="tab" onclick="showTab('arch-data')">Data Model</button>
+                <button class="tab" onclick="showTab('arch-deploy')">Deployment</button>
+            </div>
+
+            <div id="arch-overview" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Architecture Overview</h3>
+                    </div>
+                    <div class="mermaid">
+flowchart TD
+    subgraph Clients["Client Layer"]
+        MA["Mobile App"]
+        WA["Web App"]
+    end
+
+    subgraph Gateway["Gateway Layer"]
+        AG["API Gateway\n(Auth, Rate Limiting, Routing)"]
+    end
+
+    subgraph Services["Microservices Layer"]
+        AUTH["Authentication Service"]
+        DS["Driver Service"]
+        PS["Passenger Service"]
+        RS["Ride Service"]
+        RMS["Ride Matching Service"]
+        LTS["Location Tracking Service"]
+        NS["Notification Service"]
+        PAY["Payment Service"]
+    end
+
+    subgraph DataLayer["Data Layer"]
+        UDB[("User Database")]
+        RDB[("Ride Database")]
+        GDB[("Geospatial Database")]
+        PDB[("Payment Database")]
+        RC[("Redis Cache")]
+        EQ["Event Queue"]
+        OS[("Object Storage")]
+    end
+
+    MA & WA -->|"HTTP/WebSocket"| AG
+    AG -->|"Auth Requests"| AUTH
+    AG -->|"Driver APIs"| DS
+    AG -->|"Passenger APIs"| PS
+    AG -->|"Ride APIs"| RS
+    AG -->|"WebSocket"| LTS
+
+    AUTH -->|"User Data"| UDB
+    AUTH -->|"Sessions"| RC
+    DS -->|"Driver Profiles"| UDB
+    DS -->|"Documents"| OS
+    PS -->|"Passenger Profiles"| UDB
+    RS -->|"Ride Records"| RDB
+    RS -->|"Match Request"| RMS
+    RS -->|"Events"| EQ
+    RMS -->|"Location Query"| GDB
+    RMS -->|"Driver Cache"| RC
+    LTS -->|"Live Positions"| GDB
+    LTS -->|"Position Cache"| RC
+    EQ -->|"Notifications"| NS
+    EQ -->|"Payment Events"| PAY
+    PAY -->|"Transactions"| PDB
+                    </div>
+                </div>
+            </div>
+
+            <div id="arch-sequence" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Ride Request Sequence</h3>
+                    </div>
+                    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant P as Passenger App
+    participant AG as API Gateway
+    participant AUTH as Auth Service
+    participant RS as Ride Service
+    participant RMS as Matching Service
+    participant LTS as Location Service
+    participant D as Driver App
+    participant NS as Notification Service
+    participant PAY as Payment Service
+
+    Note over P,PAY: User Authentication Flow
+    P->>AG: Login Request
+    AG->>AUTH: Validate Credentials
+    activate AUTH
+    AUTH-->>AG: JWT Token
+    deactivate AUTH
+    AG-->>P: Auth Success + Token
+
+    Note over P,PAY: Ride Request Flow
+    P->>AG: Request Ride (pickup, destination)
+    AG->>RS: Create Ride Request
+    activate RS
+    RS->>RMS: Find Available Drivers
+    activate RMS
+    RMS->>LTS: Query Nearby Drivers
+    LTS-->>RMS: Driver Locations
+    RMS-->>RS: Matched Driver
+    deactivate RMS
+    RS->>NS: Notify Driver
+    NS-->>D: Push Notification
+    RS-->>AG: Ride Created
+    deactivate RS
+    AG-->>P: Ride Confirmed
+                    </div>
+                </div>
+            </div>
+
+            <div id="arch-data" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Entity Relationship Diagram</h3>
+                    </div>
+                    <div class="mermaid">
+erDiagram
+    USER {
+        uuid id PK
+        string email UK
+        string phone UK
+        string password_hash
+        enum role
+        timestamp created_at
+        boolean is_active
+    }
+
+    DRIVER_PROFILE {
+        uuid id PK
+        uuid user_id FK
+        string license_number
+        string vehicle_make
+        string vehicle_model
+        float rating
+        decimal earnings_balance
+        enum status
+    }
+
+    RIDE {
+        uuid id PK
+        uuid passenger_id FK
+        uuid driver_id FK
+        point pickup_location
+        point dropoff_location
+        enum status
+        decimal fare_amount
+        timestamp requested_at
+    }
+
+    PAYMENT {
+        uuid id PK
+        uuid ride_id FK
+        uuid passenger_id FK
+        decimal amount
+        enum status
+        string transaction_ref
+    }
+
+    USER ||--o| DRIVER_PROFILE : "has"
+    DRIVER_PROFILE ||--o{ RIDE : "drives"
+    RIDE ||--o{ PAYMENT : "has"
+                    </div>
+                </div>
+            </div>
+
+            <div id="arch-deploy" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Deployment Architecture</h3>
+                    </div>
+                    <div class="mermaid">
+flowchart LR
+    subgraph Internet["Internet"]
+        Users["Mobile & Web Users"]
+    end
+
+    subgraph CDN["CDN Layer"]
+        CF["CloudFront CDN"]
+    end
+
+    subgraph VPC["AWS VPC"]
+        subgraph PublicSubnet["Public Subnet"]
+            ALB["Application Load Balancer"]
+            NLB["Network Load Balancer"]
+        end
+
+        subgraph EKS["Container Cluster"]
+            AGW["API Gateway x2"]
+            SVC["Microservices x8"]
+        end
+
+        subgraph DataSubnet["Private Data Subnet"]
+            PG[("PostgreSQL")]
+            REDIS[("Redis Cluster")]
+            S3[("S3 Storage")]
+        end
+    end
+
+    Users --> CF
+    CF --> ALB
+    ALB --> AGW
+    AGW --> SVC
+    SVC --> PG
+    SVC --> REDIS
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Components -->
+        <section id="components" class="section">
+            <div class="section-header">
+                <h1 class="section-title">System Components</h1>
+                <p class="section-subtitle">Detailed breakdown of all platform components</p>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <h3 style="font-size: 16px; color: var(--text-primary); margin-bottom: 16px;">Services</h3>
+                    
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(59, 130, 246, 0.15);">🚪</div>
+                        <div class="component-info">
+                            <h4>API Gateway</h4>
+                            <p>Central entry point handling authentication, rate limiting, and request routing</p>
+                        </div>
+                        <span class="component-kind">gateway</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(139, 92, 246, 0.15);">🔐</div>
+                        <div class="component-info">
+                            <h4>Authentication Service</h4>
+                            <p>User registration, login, token management, and RBAC</p>
+                        </div>
+                        <span class="component-kind">service</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(16, 185, 129, 0.15);">🚗</div>
+                        <div class="component-info">
+                            <h4>Driver Service</h4>
+                            <p>Driver profiles, availability, vehicle info, and earnings</p>
+                        </div>
+                        <span class="component-kind">service</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(245, 158, 11, 0.15);">👤</div>
+                        <div class="component-info">
+                            <h4>Passenger Service</h4>
+                            <p>Passenger profiles, ride history, and preferences</p>
+                        </div>
+                        <span class="component-kind">service</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(6, 182, 212, 0.15);">🎯</div>
+                        <div class="component-info">
+                            <h4>Ride Service</h4>
+                            <p>Core ride management, status updates, and fare calculation</p>
+                        </div>
+                        <span class="component-kind">service</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(236, 72, 153, 0.15);">🔄</div>
+                        <div class="component-info">
+                            <h4>Ride Matching Service</h4>
+                            <p>Intelligent driver-passenger matching and ride-sharing</p>
+                        </div>
+                        <span class="component-kind">service</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(34, 197, 94, 0.15);">📍</div>
+                        <div class="component-info">
+                            <h4>Location Tracking Service</h4>
+                            <p>Real-time WebSocket location tracking and ETA updates</p>
+                        </div>
+                        <span class="component-kind">service</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 16px; color: var(--text-primary); margin-bottom: 16px;">Data Stores</h3>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(59, 130, 246, 0.15);">🗄️</div>
+                        <div class="component-info">
+                            <h4>User Database</h4>
+                            <p>PostgreSQL - User accounts, driver/passenger profiles</p>
+                        </div>
+                        <span class="component-kind">database</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(139, 92, 246, 0.15);">📊</div>
+                        <div class="component-info">
+                            <h4>Ride Database</h4>
+                            <p>PostgreSQL + TimescaleDB - Ride records and history</p>
+                        </div>
+                        <span class="component-kind">database</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(16, 185, 129, 0.15);">🌍</div>
+                        <div class="component-info">
+                            <h4>Geospatial Database</h4>
+                            <p>PostgreSQL + PostGIS - Real-time locations and spatial queries</p>
+                        </div>
+                        <span class="component-kind">database</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(245, 158, 11, 0.15);">💳</div>
+                        <div class="component-info">
+                            <h4>Payment Database</h4>
+                            <p>PostgreSQL + pgcrypto - Secure payment transactions</p>
+                        </div>
+                        <span class="component-kind">database</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(239, 68, 68, 0.15);">⚡</div>
+                        <div class="component-info">
+                            <h4>Redis Cache</h4>
+                            <p>Session management, location cache, rate limiting</p>
+                        </div>
+                        <span class="component-kind">cache</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(6, 182, 212, 0.15);">📬</div>
+                        <div class="component-info">
+                            <h4>Event Queue</h4>
+                            <p>BullMQ/Redis - Async event processing</p>
+                        </div>
+                        <span class="component-kind">queue</span>
+                    </div>
+
+                    <div class="component-item">
+                        <div class="component-icon" style="background: rgba(168, 85, 247, 0.15);">📁</div>
+                        <div class="component-info">
+                            <h4>Object Storage</h4>
+                            <p>AWS S3 - Driver documents and profile images</p>
+                        </div>
+                        <span class="component-kind">storage</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section id="tech-stack" class="section">
+            <div class="section-header">
+                <h1 class="section-title">Technology Stack</h1>
+                <p class="section-subtitle">Detailed technology decisions with alternatives and migration paths</p>
+            </div>
+
+            <div class="collapsible open">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">🚪 API Gateway - Kong Gateway</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                        Kong provides robust API gateway capabilities including native WebSocket support for location tracking, 
+                        built-in rate limiting, and authentication plugins. The team's Node.js expertise aligns well with Kong's 
+                        Lua-based plugin system.
+                    </p>
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="font-size: 14px; margin-bottom: 12px;">Alternatives Considered</h4>
+                            <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                                <strong style="font-size: 13px;">AWS API Gateway + ALB</strong>
+                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                                    Fully managed but has 2-hour WebSocket limit
+                                </p>
+                            </div>
+                            <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px;">
+                                <strong style="font-size: 13px;">Traefik</strong>
+                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                                    Excellent Docker integration but less mature plugins
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 14px; margin-bottom: 12px;">Switch Conditions</h4>
+                            <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 16px;">
+                                <li>Switch to AWS API Gateway if moving to serverless</li>
+                                <li>Switch to Traefik if adopting Kubernetes</li>
+                                <li>Switch to NGINX Plus if team has NGINX expertise</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">⚙️ Backend - Node.js + Fastify</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                        Fastify outperforms Express by 2-3x in benchmarks, critical for real-time location updates. 
+                        Native TypeScript support and WebSocket plugin make it ideal for the Location Tracking Service.
+                    </p>
+                    <div class="grid-2">
+                        <div>
+                            <h4 style="font-size: 14px; margin-bottom: 12px;">Alternatives</h4>
+                            <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                                <strong style="font-size: 13px;">Express.js</strong>
+                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                                    Familiar but 30-40% slower for JSON serialization
+                                </p>
+                            </div>
+                            <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px;">
+                                <strong style="font-size: 13px;">Go + Gin</strong>
+                                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                                    Superior performance but requires team training
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 14px; margin-bottom: 12px;">Switch Conditions</h4>
+                            <ul style="font-size: 13px; color: var(--text-secondary); padding-left: 16px;">
+                                <li>Switch to Go if matching becomes CPU-bound</li>
+                                <li>Consider Elixir/Phoenix for 100K+ WebSockets</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">🗄️ Databases - PostgreSQL 16 + Extensions</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                        PostgreSQL provides ACID compliance, row-level security for GDPR, and extensibility with 
+                        PostGIS for geospatial queries and TimescaleDB for time-series ride data.
+                    </p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Database</th>
+                                    <th>Extension</th>
+                                    <th>Purpose</th>
+                                    <th>Key Feature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>User Database</td>
+                                    <td>pgAudit</td>
+                                    <td>User accounts & profiles</td>
+                                    <td>Row-level security</td>
+                                </tr>
+                                <tr>
+                                    <td>Ride Database</td>
+                                    <td>TimescaleDB</td>
+                                    <td>Ride records & history</td>
+                                    <td>Time-series optimization</td>
+                                </tr>
+                                <tr>
+                                    <td>Geospatial Database</td>
+                                    <td>PostGIS</td>
+                                    <td>Driver locations</td>
+                                    <td>Spatial indexes (GiST)</td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Database</td>
+                                    <td>pgcrypto</td>
+                                    <td>Transactions</td>
+                                    <td>Column-level encryption</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">📡 Real-time - Socket.io + Redis Adapter</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                        Socket.io provides WebSocket with automatic fallback for unreliable mobile networks. 
+                        Redis adapter enables horizontal scaling across multiple service instances.
+                    </p>
+                    <div class="alert alert-info">
+                        <span class="alert-icon">💡</span>
+                        <div class="alert-content">
+                            <h4>Key Capability</h4>
+                            <p>Socket.io rooms efficiently broadcast driver locations to relevant passengers only</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">💳 Payments - Stripe Connect</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p style="color: var(--text-secondary); margin-bottom: 16px;">
+                        Stripe Connect handles marketplace payments including fare splitting for shared rides, 
+                        driver payouts, and PCI compliance without storing card data.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scalability -->
+        <section id="scalability" class="section">
+            <div class="section-header">
+                <h1 class="section-title">Scalability Roadmap</h1>
+                <p class="section-subtitle">Growth stages from 0 to 500K monthly active users</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background: var(--accent-green);"></div>
+                    <div class="timeline-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span class="timeline-title">Stage 1: Foundation (0-1K MAU)</span>
+                            <span class="card-badge badge-green">$2,850/mo</span>
+                        </div>
+                        <p class="timeline-text" style="margin-bottom: 16px;">
+                            Establish core infrastructure with single-node deployments, basic rate limiting, 
+                            and simple proximity-based matching within 5km radius.
+                        </p>
+                        <div class="grid-4" style="gap: 12px;">
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-green);">&lt;200ms</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">API P95</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-blue);">500</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">WebSockets</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-purple);">100</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Active Rides</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-yellow);">99.5%</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Availability</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background: var(--accent-blue);"></div>
+                    <div class="timeline-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span class="timeline-title">Stage 2: Growth (1K-50K MAU)</span>
+                            <span class="card-badge badge-blue">$18,500/mo</span>
+                        </div>
+                        <p class="timeline-text" style="margin-bottom: 16px;">
+                            Horizontal scaling with Redis Cluster, read replicas, geohash-based sharding for locations, 
+                            and surge pricing implementation.
+                        </p>
+                        <div class="grid-4" style="gap: 12px;">
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-green);">&lt;150ms</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">API P95</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-blue);">10K</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">WebSockets</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-purple);">1K</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Active Rides</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-yellow);">99.9%</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Availability</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot" style="background: var(--accent-purple);"></div>
+                    <div class="timeline-content">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span class="timeline-title">Stage 3: Scale (50K-500K MAU)</span>
+                            <span class="card-badge badge-purple">$125,000/mo</span>
+                        </div>
+                        <p class="timeline-text" style="margin-bottom: 16px;">
+                            Multi-region deployment with GeoDNS, ML-based matching, service mesh, and database sharding 
+                            for global scale operations.
+                        </p>
+                        <div class="grid-4" style="gap: 12px;">
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-green);">&lt;100ms</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">API P95</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-blue);">100K+</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">WebSockets</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-purple);">10K+</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Active Rides</div>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: var(--bg-tertiary); border-radius: 8px;">
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-yellow);">99.99%</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">Availability</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 32px;">
+                <div class="card-header">
+                    <h3 class="card-title">Key Inflection Points</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trigger</th>
+                                <th>Threshold</th>
+                                <th>Action</th>
+                                <th>Cost Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>WebSocket connection limits</td>
+                                <td>500 connections/instance</td>
+                                <td>Deploy Socket.io Redis adapter</td>
+                                <td style="color: var(--accent-yellow);">+$800/mo</td>
+                            </tr>
+                            <tr>
+                                <td>Ride matching latency</td>
+                                <td>5 seconds P95</td>
+                                <td>Dedicated PostGIS + OSRM</td>
+                                <td style="color: var(--accent-yellow);">+$2,500/mo</td>
+                            </tr>
+                            <tr>
+                                <td>Database read latency</td>
+                                <td>100ms P95</td>
+                                <td>Deploy read replicas + PgBouncer</td>
+                                <td style="color: var(--accent-yellow);">+$3,200/mo</td>
+                            </tr>
+                            <tr>
+                                <td>Redis memory limits</td>
+                                <td>80% memory usage</td>
+                                <td>Migrate to Redis Cluster</td>
+                                <td style="color: var(--accent-yellow);">+$5,000/mo</td>
+                            </tr>
+                            <tr>
+                                <td>Single-region latency</td>
+                                <td>300ms for distant users</td>
+                                <td>Multi-region deployment</td>
+                                <td style="color: var(--accent-red);">+$45,000/mo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security -->
+        <section id="security" class="section">
+            <div class="section-header">
+                <h1 class="section-title">Security Assessment</h1>
+                <p class="section-subtitle">Comprehensive security analysis and compliance readiness</p>
+            </div>
+
+            <div class="grid-4" style="margin-bottom: 32px;">
+                <div class="stat-card">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="score-circle" style="background: conic-gradient(var(--accent-yellow) 0deg, var(--accent-yellow) 90deg, var(--bg-tertiary) 90deg);">
+                            <span style="color: var(--accent-yellow);">25%</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600;">SOC2</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">12 gaps</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="score-circle" style="background: conic-gradient(var(--accent-red) 0deg, var(--accent-red) 54deg, var(--bg-tertiary) 54deg);">
+                            <span style="color: var(--accent-red);">15%</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600;">HIPAA</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">18 gaps</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="score-circle" style="background: conic-gradient(var(--accent-yellow) 0deg, var(--accent-yellow) 72deg, var(--bg-tertiary) 72deg);">
+                            <span style="color: var(--accent-yellow);">20%</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600;">GDPR</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">14 gaps</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="score-circle" style="background: conic-gradient(var(--accent-red) 0deg, var(--accent-red) 36deg, var(--bg-tertiary) 36deg);">
+                            <span style="color: var(--accent-red);">10%</span>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600;">PCI-DSS</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">22 gaps</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Critical Security Findings</h3>
+                    <span class="card-badge badge-red">5 Critical</span>
+                </div>
+
+                <div class="alert alert-critical">
+                    <span class="alert-icon">🚨</span>
+                    <div class="alert-content">
+                        <h4 style="color: var(--accent-red);">AUTH-001: All API Endpoints Lack Authentication</h4>
+                        <p>Every API endpoint is marked as '[no auth specified]', including payment processing and driver status updates. This could allow unauthorized access to all system functions.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-critical">
+                    <span class="alert-icon">🚨</span>
+                    <div class="alert-content">
+                        <h4 style="color: var(--accent-red);">DATA-001: Payment Data Without PCI-DSS Controls</h4>
+                        <p>Payment Database stores financial records without indication of tokenization, encryption at rest, or PCI-DSS compliant data handling.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h4 style="color: var(--accent-yellow);">AUTH-002: WebSocket Lacks Authentication</h4>
+                        <p>The WS /ws/tracking endpoint has no authentication, allowing potential monitoring of all driver movements.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h4 style="color: var(--accent-yellow);">NET-001: Internal Service Communication Undefined</h4>
+                        <p>No specification of mTLS or service mesh for inter-service communication security.</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h4 style="color: var(--accent-yellow);">DATA-002: Real-Time Location Data Exposure</h4>
+                        <p>High-precision location data combined with driver profiles creates severe privacy risk.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Reference -->
+        <section id="api" class="section">
+            <div class="section-header">
+                <h1 class="section-title">API Reference</h1>
+                <p class="section-subtitle">RESTful API endpoints with OpenAPI 3.0 specification</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Authentication Service</h3>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/auth/register</span>
+                    <span class="api-desc">Register new user (driver/passenger)</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/auth/login</span>
+                    <span class="api-desc">Authenticate user and return JWT</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/auth/refresh</span>
+                    <span class="api-desc">Refresh access token</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Driver Service</h3>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-get">GET</span>
+                    <span class="api-path">/api/v1/drivers/profile</span>
+                    <span class="api-desc">Get driver profile</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-patch">PATCH</span>
+                    <span class="api-path">/api/v1/drivers/status</span>
+                    <span class="api-desc">Update driver availability status</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/drivers/location</span>
+                    <span class="api-desc">Update driver location</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-get">GET</span>
+                    <span class="api-path">/api/v1/drivers/nearby</span>
+                    <span class="api-desc">Find nearby available drivers</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Ride Service</h3>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/rides</span>
+                    <span class="api-desc">Create new ride request</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-get">GET</span>
+                    <span class="api-path">/api/v1/rides/{rideId}</span>
+                    <span class="api-desc">Get ride details</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/rides/{rideId}/accept</span>
+                    <span class="api-desc">Driver accepts ride</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/rides/{rideId}/complete</span>
+                    <span class="api-desc">Complete ride and trigger payment</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-get">GET</span>
+                    <span class="api-path">/api/v1/rides/fare/estimate</span>
+                    <span class="api-desc">Estimate fare for route</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Payment Service</h3>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/payments/process</span>
+                    <span class="api-desc">Process ride payment</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-get">GET</span>
+                    <span class="api-path">/api/v1/payments/history</span>
+                    <span class="api-desc">Get payment history</span>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method method-post">POST</span>
+                    <span class="api-path">/api/v1/payments/refund</span>
+                    <span class="api-desc">Request payment refund</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">WebSocket Endpoints</h3>
+                </div>
+                <div class="api-endpoint">
+                    <span class="api-method" style="background: rgba(6, 182, 212, 0.2); color: var(--accent-cyan);">WS</span>
+                    <span class="api-path">/ws/tracking</span>
+                    <span class="api-desc">Real-time location tracking</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- UI Mockups -->
+        <section id="mockups" class="section">
+            <div class="section-header">
+                <h1 class="section-title">UI/UX Mockups</h1>
+                <p class="section-subtitle">Interactive screen designs for the RideShare platform</p>
+            </div>
+
+            <!-- Mockup 1: Login Screen -->
+            <div class="grid-2" style="margin-bottom: 32px;">
+                <div>
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">1. Login Screen</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Clean authentication interface with social login options and phone verification.
+                    </p>
+                    <div class="mobile-mockup">
+                        <div class="mobile-notch"></div>
+                        <div class="mobile-content" style="background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); display: flex; flex-direction: column; justify-content: center; padding: 40px 24px;">
+                            <div style="text-align: center; margin-bottom: 40px;">
+                                <div style="width: 64px; height: 64px; background: var(--gradient-1); border-radius: 16px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 32px;">🚗</div>
+                                <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">RideShare</h2>
+                                <p style="font-size: 14px; color: var(--text-muted);">Get there safely</p>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">Phone Number</label>
+                                <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 14px;">🇺🇸 +1</span>
+                                    <span style="color: var(--text-muted); font-size: 14px;">(555) 123-4567</span>
+                                </div>
+                            </div>
+                            <button style="width: 100%; padding: 16px; background: var(--gradient-1); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 24px;">Continue</button>
+                            <div style="text-align: center; margin-bottom: 24px;">
+                                <span style="font-size: 12px; color: var(--text-muted);">or continue with</span>
+                            </div>
+                            <div style="display: flex; gap: 12px;">
+                                <button style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: none; border-radius: 10px; color: white; font-size: 20px; cursor: pointer;">G</button>
+                                <button style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: none; border-radius: 10px; color: white; font-size: 20px; cursor: pointer;">🍎</button>
+                                <button style="flex: 1; padding: 12px; background: rgba(255,255,255,0.1); border: none; border-radius: 10px; color: white; font-size: 20px; cursor: pointer;">f</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mockup 2: Home/Map Screen -->
+                <div>
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">2. Home Screen (Passenger)</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Main map view with destination search and nearby driver indicators.
+                    </p>
+                    <div class="mobile-mockup">
+                        <div class="mobile-notch"></div>
+                        <div class="mobile-content" style="background: #1a1a2e; padding: 0; position: relative;">
+                            <!-- Map placeholder -->
+                            <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 50%, #1e3a5f 100%); opacity: 0.5;"></div>
+                            <!-- Driver markers -->
+                            <div style="position: absolute; top: 120px; left: 80px; width: 32px; height: 32px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🚗</div>
+                            <div style="position: absolute; top: 180px; right: 60px; width: 32px; height: 32px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🚗</div>
+                            <div style="position: absolute; top: 250px; left: 120px; width: 32px; height: 32px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">🚗</div>
+                            <!-- User location -->
+                            <div style="position: absolute; top: 200px; left: 50%; transform: translateX(-50%); width: 20px; height: 20px; background: var(--accent-blue); border: 3px solid white; border-radius: 50%; box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.3);"></div>
+                            <!-- Top bar -->
+                            <div style="position: relative; padding: 40px 16px 16px; display: flex; justify-content: space-between; align-items: center;">
+                                <div style="width: 40px; height: 40px; background: var(--bg-card); border-radius: 12px; display: flex; align-items: center; justify-content: center;">☰</div>
+                                <div style="width: 40px; height: 40px; background: var(--bg-card); border-radius: 12px; display: flex; align-items: center; justify-content: center;">🔔</div>
+                            </div>
+                            <!-- Bottom sheet -->
+                            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: var(--bg-card); border-radius: 24px 24px 0 0; padding: 20px 16px 32px;">
+                                <div style="width: 40px; height: 4px; background: var(--border-color); border-radius: 2px; margin: 0 auto 20px;"></div>
+                                <div style="background: var(--bg-tertiary); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                    <span style="font-size: 20px;">📍</span>
+                                    <span style="color: var(--text-muted); font-size: 15px;">Where to?</span>
+                                </div>
+                                <div style="display: flex; gap: 12px;">
+                                    <div style="flex: 1; background: var(--bg-tertiary); border-radius: 12px; padding: 12px; text-align: center;">
+                                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">🏠</span>
+                                        <span style="font-size: 12px; color: var(--text-muted);">Home</span>
+                                    </div>
+                                    <div style="flex: 1; background: var(--bg-tertiary); border-radius: 12px; padding: 12px; text-align: center;">
+                                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">💼</span>
+                                        <span style="font-size: 12px; color: var(--text-muted);">Work</span>
+                                    </div>
+                                    <div style="flex: 1; background: var(--bg-tertiary); border-radius: 12px; padding: 12px; text-align: center;">
+                                        <span style="font-size: 20px; display: block; margin-bottom: 4px;">⭐</span>
+                                        <span style="font-size: 12px; color: var(--text-muted);">Saved</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 3 & 4 -->
+            <div class="grid-2" style="margin-bottom: 32px;">
+                <div>
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">3. Ride Selection</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Choose ride type with fare estimates and ETA information.
+                    </p>
+                    <div class="mobile-mockup">
+                        <div class="mobile-notch"></div>
+                        <div class="mobile-content" style="background: #1a1a2e; padding: 40px 16px 16px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                                <div style="width: 36px; height: 36px; background: var(--bg-tertiary); border-radius: 10px; display: flex; align-items: center; justify-content: center;">←</div>
+                                <h3 style="font-size: 18px; font-weight: 600;">Choose a ride</h3>
+                            </div>
+                            <!-- Route summary -->
+                            <div style="background: var(--bg-tertiary); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="width: 10px; height: 10px; background: var(--accent-blue); border-radius: 50%;"></div>
+                                    <span style="font-size: 14px;">123 Main Street</span>
+                                </div>
+                                <div style="border-left: 2px dashed var(--border-color); height: 20px; margin-left: 4px;"></div>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 10px; height: 10px; background: var(--accent-green); border-radius: 2px;"></div>
+                                    <span style="font-size: 14px;">456 Oak Avenue</span>
+                                </div>
+                            </div>
+                            <!-- Ride options -->
+                            <div style="background: var(--bg-card); border: 2px solid var(--accent-blue); border-radius: 16px; padding: 16px; margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <span style="font-size: 28px;">🚗</span>
+                                        <div>
+                                            <div style="font-size: 15px; font-weight: 600;">RideShare</div>
+                                            <div style="font-size: 12px; color: var(--text-muted);">4 min away • 3 seats</div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 16px; font-weight: 700;">$12.50</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">15 min</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <span style="font-size: 28px;">🚙</span>
+                                        <div>
+                                            <div style="font-size: 15px; font-weight: 600;">RideShare XL</div>
+                                            <div style="font-size: 12px; color: var(--text-muted);">6 min away • 6 seats</div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 16px; font-weight: 700;">$18.00</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">15 min</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 24px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <span style="font-size: 28px;">👥</span>
+                                        <div>
+                                            <div style="font-size: 15px; font-weight: 600;">Pool</div>
+                                            <div style="font-size: 12px; color: var(--text-muted);">Share & save • 2 seats</div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 16px; font-weight: 700;">$8.75</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">20 min</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button style="width: 100%; padding: 16px; background: var(--gradient-1); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 600; cursor: pointer;">Confirm RideShare</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">4. Driver Matching</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Real-time matching animation with driver details.
+                    </p>
+                    <div class="mobile-mockup">
+                        <div class="mobile-notch"></div>
+                        <div class="mobile-content" style="background: #1a1a2e; padding: 40px 16px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <div style="width: 120px; height: 120px; border: 3px solid var(--accent-blue); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 32px;"></div>
+                            <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Finding your driver</h3>
+                            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 40px;">This usually takes less than a minute</p>
+                            <!-- Driver card (appearing) -->
+                            <div style="background: var(--bg-card); border-radius: 20px; padding: 20px; width: 100%; opacity: 0.7;">
+                                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                    <div style="width: 56px; height: 56px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px;">👤</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 16px; font-weight: 600;">Michael S.</div>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <span style="color: var(--accent-yellow);">★</span>
+                                            <span style="font-size: 13px;">4.92</span>
+                                            <span style="font-size: 12px; color: var(--text-muted);">• 2,341 trips</span>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 14px; font-weight: 600;">4 min</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">away</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-tertiary); border-radius: 12px;">
+                                    <span style="font-size: 24px;">🚗</span>
+                                    <div>
+                                        <div style="font-size: 14px; font-weight: 500;">Toyota Camry</div>
+                                        <div style="font-size: 12px; color: var(--text-muted);">Silver • ABC 1234</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 5 & 6 -->
+            <div class="grid-2" style="margin-bottom: 32px;">
+                <div>
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">5. Active Ride Tracking</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Real-time driver location with ETA and trip progress.
+                    </p>
+                    <div class="mobile-mockup">
+                        <div class="mobile-notch"></div>
+                        <div class="mobile-content" style="background: #1a1a2e; padding: 0; position: relative;">
+                            <!-- Map area -->
+                            <div style="position: absolute; inset: 0; background: linear-gradient(135deg, #1e3a5f 0%, #2d5a7b 50%, #1e3a5f 100%); opacity: 0.5;"></div>
+                            <!-- Route line -->
+                            <div style="position: absolute; top: 150px; left: 50px; width: 200px; height: 3px; background: var(--accent-blue); transform: rotate(25deg);"></div>
+                            <!-- Driver position -->
+                            <div style="position: absolute; top: 140px; left: 100px; width: 40px; height: 40px; background: var(--bg-card); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">🚗</div>
+                            <!-- Destination -->
+                            <div style="position: absolute; top: 200px; right: 60px; width: 32px; height: 32px; background: var(--accent-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px;">📍</div>
+                            <!-- Top status -->
+                            <div style="position: relative; padding: 40px 16px 16px;">
+                                <div style="background: var(--bg-card); border-radius: 16px; padding: 16px; text-align: center;">
+                                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">ARRIVING IN</div>
+                                    <div style="font-size: 32px; font-weight: 700; color: var(--accent-blue);">3 min</div>
+                                </div>
+                            </div>
+                            <!-- Bottom panel -->
+                            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: var(--bg-card); border-radius: 24px 24px 0 0; padding: 20px 16px 32px;">
+                                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                                    <div style="width: 48px; height: 48px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px;">👤</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 15px; font-weight: 600;">Michael S.</div>
+                                        <div style="font-size: 13px; color: var(--text-muted);">Toyota Camry • ABC 1234</div>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <div style="width: 44px; height: 44px; background: var(--bg-tertiary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px;">💬</div>
+                                        <div style="width: 44px; height: 44px; background: var(--accent-green); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px;">📞</div>
+                                    </div>
+                                </div>
+                                <div style="background: var(--bg-tertiary); border-radius: 12px; padding: 12px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted);">
+                                        <span>Trip progress</span>
+                                        <span>2.4 mi remaining</span>
+                                    </div>
+                                    <div style="height: 6px; background: var(--border-color); border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                                        <div style="width: 65%; height: 100%; background: var(--gradient-1); border-radius: 3px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">6. Ride Complete & Rating</h3>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                        Trip summary with fare breakdown and driver rating.
+                    </p>
+                    <div class="mobile-mockup">
+                        <div class="mobile-notch"></div>
+                        <div class="mobile-content" style="background: #1a1a2e; padding: 40px 16px 16px;">
+                            <div style="text-align: center; margin-bottom: 24px;">
+                                <div style="width: 72px; height: 72px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; margin: 0 auto 16px;">✓</div>
+                                <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 4px;">Trip Complete!</h3>
+                                <p style="font-size: 14px; color: var(--text-muted);">Thanks for riding with us</p>
+                            </div>
+                            <!-- Fare breakdown -->
+                            <div style="background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <span style="font-size: 14px; color: var(--text-muted);">Base fare</span>
+                                    <span style="font-size: 14px;">$2.50</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <span style="font-size: 14px; color: var(--text-muted);">Distance (4.2 mi)</span>
+                                    <span style="font-size: 14px;">$6.30</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <span style="font-size: 14px; color: var(--text-muted);">Time (15 min)</span>
+                                    <span style="font-size: 14px;">$3.00</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border-color);">
+                                    <span style="font-size: 16px; font-weight: 600;">Total</span>
+                                    <span style="font-size: 16px; font-weight: 700; color: var(--accent-blue);">$12.50</span>
+                                </div>
+                            </div>
+                            <!-- Rating -->
+                            <div style="background: var(--bg-card); border-radius: 16px; padding: 20px; margin-bottom: 20px;">
+                                <div style="text-align: center; margin-bottom: 16px;">
+                                    <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Rate your driver</div>
+                                    <div style="display: flex; justify-content: center; gap: 8px;">
+                                        <span style="font-size: 32px; cursor: pointer;">⭐</span>
+                                        <span style="font-size: 32px; cursor: pointer;">⭐</span>
+                                        <span style="font-size: 32px; cursor: pointer;">⭐</span>
+                                        <span style="font-size: 32px; cursor: pointer;">⭐</span>
+                                        <span style="font-size: 32px; cursor: pointer; opacity: 0.3;">⭐</span>
+                                    </div>
+                                </div>
+                                <input type="text" placeholder="Add a comment (optional)" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: none; border-radius: 10px; color: var(--text-primary); font-size: 14px;">
+                            </div>
+                            <button style="width: 100%; padding: 16px; background: var(--gradient-1); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 600; cursor: pointer;">Submit Rating</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Mockups -->
+            <h3 style="font-size: 20px; margin-bottom: 24px;">Desktop & Admin Interfaces</h3>
+
+            <!-- Mockup 7: Admin Dashboard -->
+            <div style="margin-bottom: 32px;">
+                <h3 style="font-size: 18px; margin-bottom: 8px;">7. Admin Dashboard</h3>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Comprehensive admin view with real-time metrics and system health.
+                </p>
+                <div class="mockup-container">
+                    <div class="mockup-header">
+                        <div class="mockup-dot red"></div>
+                        <div class="mockup-dot yellow"></div>
+                        <div class="mockup-dot green"></div>
+                        <span class="mockup-title">RideShare Admin — Dashboard</span>
+                    </div>
+                    <div class="mockup-content" style="display: flex; background: var(--bg-primary);">
+                        <!-- Sidebar -->
+                        <div style="width: 220px; background: var(--bg-secondary); padding: 20px; border-right: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 32px;">
+                                <div style="width: 32px; height: 32px; background: var(--gradient-1); border-radius: 8px; display: flex; align-items: center; justify-content: center;">🚗</div>
+                                <span style="font-weight: 600;">RideShare</span>
+                            </div>
+                            <div style="margin-bottom: 8px; padding: 10px 12px; background: var(--accent-blue); border-radius: 8px; font-size: 14px;">📊 Dashboard</div>
+                            <div style="margin-bottom: 8px; padding: 10px 12px; font-size: 14px; color: var(--text-secondary);">🚗 Rides</div>
+                            <div style="margin-bottom: 8px; padding: 10px 12px; font-size: 14px; color: var(--text-secondary);">👥 Users</div>
+                            <div style="margin-bottom: 8px; padding: 10px 12px; font-size: 14px; color: var(--text-secondary);">💳 Payments</div>
+                            <div style="margin-bottom: 8px; padding: 10px 12px; font-size: 14px; color: var(--text-secondary);">📍 Tracking</div>
+                            <div style="margin-bottom: 8px; padding: 10px 12px; font-size: 14px; color: var(--text-secondary);">⚙️ Settings</div>
+                        </div>
+                        <!-- Main content -->
+                        <div style="flex: 1; padding: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                                <h2 style="font-size: 24px; font-weight: 600;">Dashboard</h2>
+                                <div style="display: flex; gap: 12px;">
+                                    <select style="padding: 8px 16px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);">
+                                        <option>Last 24 hours</option>
+                                    </select>
+                                    <button style="padding: 8px 16px; background: var(--accent-blue); border: none; border-radius: 8px; color: white; cursor: pointer;">Export</button>
+                                </div>
+                            </div>
+                            <!-- Stats row -->
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Active Rides</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: var(--accent-blue);">847</div>
+                                    <div style="font-size: 12px; color: var(--accent-green); margin-top: 4px;">↑ 12% from yesterday</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Online Drivers</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: var(--accent-green);">1,234</div>
+                                    <div style="font-size: 12px; color: var(--accent-green); margin-top: 4px;">↑ 8% from yesterday</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Revenue Today</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: var(--accent-purple);">$24.5K</div>
+                                    <div style="font-size: 12px; color: var(--accent-green); margin-top: 4px;">↑ 15% from yesterday</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Avg. Wait Time</div>
+                                    <div style="font-size: 28px; font-weight: 700; color: var(--accent-yellow);">3.2m</div>
+                                    <div style="font-size: 12px; color: var(--accent-red); margin-top: 4px;">↓ 5% from yesterday</div>
+                                </div>
+                            </div>
+                            <!-- Charts row -->
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Rides Over Time</div>
+                                    <div style="display: flex; align-items: flex-end; gap: 8px; height: 120px;">
+                                        <div style="flex: 1; background: var(--accent-blue); border-radius: 4px 4px 0 0; height: 60%;"></div>
+                                        <div style="flex: 1; background: var(--accent-blue); border-radius: 4px 4px 0 0; height: 75%;"></div>
+                                        <div style="flex: 1; background: var(--accent-blue); border-radius: 4px 4px 0 0; height: 45%;"></div>
+                                        <div style="flex: 1; background: var(--accent-blue); border-radius: 4px 4px 0 0; height: 90%;"></div>
+                                        <div style="flex: 1; background: var(--accent-blue); border-radius: 4px 4px 0 0; height: 100%;"></div>
+                                        <div style="flex: 1; background: var(--accent-blue); border-radius: 4px 4px 0 0; height: 85%;"></div>
+                                        <div style="flex: 1; background: var(--accent-blue); border-radius: 4px 4px 0 0; height: 70%;"></div>
+                                        <div style="flex: 1; background: var(--accent-purple); border-radius: 4px 4px 0 0; height: 95%;"></div>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-muted);">
+                                        <span>6AM</span><span>9AM</span><span>12PM</span><span>3PM</span><span>6PM</span><span>9PM</span><span>12AM</span><span>Now</span>
+                                    </div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">Ride Types</div>
+                                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                                                <span>Standard</span><span>62%</span>
+                                            </div>
+                                            <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px;">
+                                                <div style="width: 62%; height: 100%; background: var(--accent-blue); border-radius: 4px;"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                                                <span>Pool</span><span>25%</span>
+                                            </div>
+                                            <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px;">
+                                                <div style="width: 25%; height: 100%; background: var(--accent-green); border-radius: 4px;"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                                                <span>XL</span><span>13%</span>
+                                            </div>
+                                            <div style="height: 8px; background: var(--bg-tertiary); border-radius: 4px;">
+                                                <div style="width: 13%; height: 100%; background: var(--accent-purple); border-radius: 4px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mockup 8: Driver Management -->
+            <div style="margin-bottom: 32px;">
+                <h3 style="font-size: 18px; margin-bottom: 8px;">8. Driver Management</h3>
+                <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                    Admin interface for managing driver profiles, documents, and status.
+                </p>
+                <div class="mockup-container">
+                    <div class="mockup-header">
+                        <div class="mockup-dot red"></div>
+                        <div class="mockup-dot yellow"></div>
+                        <div class="mockup-dot green"></div>
+                        <span class="mockup-title">RideShare Admin — Driver Management</span>
+                    </div>
+                    <div class="mockup-content" style="background: var(--bg-primary); padding: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                            <h2 style="font-size: 20px; font-weight: 600;">Drivers</h2>
+                            <div style="display: flex; gap: 12px;">
+                                <input type="text" placeholder="Search drivers..." style="padding: 10px 16px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); width: 250px;">
+                                <select style="padding: 10px 16px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);">
+                                    <option>All Status</option>
+                                    <option>Online</option>
+                                    <option>Offline</option>
+                                    <option>Busy</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;">
+                            <table style="width: 100%;">
+                                <thead>
+                                    <tr style="background: var(--bg-tertiary);">
+                                        <th style="padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted);">DRIVER</th>
+                                        <th style="padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted);">VEHICLE</th>
+                                        <th style="padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted);">STATUS</th>
+                                        <th style="padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted);">RATING</th>
+                                        <th style="padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted);">TRIPS</th>
+                                        <th style="padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted);">EARNINGS</th>
+                                        <th style="padding: 14px 16px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted);">ACTIONS</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td style="padding: 14px 16px;">
+                                            <div style="display: flex; align-items: center; gap: 12px;">
+                                                <div style="width: 36px; height: 36px; background: var(--gradient-1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">MS</div>
+                                                <div>
+                                                    <div style="font-size: 14px; font-weight: 500;">Michael Smith</div>
+                                                    <div style="font-size: 12px; color: var(--text-muted);">michael@email.com</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 14px 16px; font-size: 14px;">Toyota Camry 2022</td>
+                                        <td style="padding: 14px 16px;"><span style="padding: 4px 10px; background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border-radius: 20px; font-size: 12px;">Online</span></td>
+                                        <td style="padding: 14px 16px; font-size: 14px;">⭐ 4.92</td>
+                                        <td style="padding: 14px 16px; font-size: 14px;">2,341</td>
+                                        <td style="padding: 14px 16px; font-size: 14px; font-weight: 500;">$45,230</td>
+                                        <td style="padding: 14px 16px;"><button style="padding: 6px 12px; background: var(--bg-tertiary); border: none; border-radius: 6px; color: var(--text-secondary); cursor: pointer; font-size: 12px;">View</button></td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td style="padding: 14px 16px;">
+                                            <div style="display: flex; align-items: center; gap: 12px;">
+                                                <div style="width: 36px; height: 36px; background: var(--gradient-2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">JD</div>
+                                                <div>
+                                                    <div style="

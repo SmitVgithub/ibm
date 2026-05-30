@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile>
+  <diagram name="Architecture">
+    <mxGraphModel>
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="API Gateway" style="rhombus;whiteSpace=wrap;html=1;fillColor=#EF4444;fontColor=#ffffff;strokeColor=#EF4444;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="Authentication Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="280" y="40" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="Driver Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="520" y="40" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="Passenger Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="760" y="40" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="Ride Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="160" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="7" value="Ride Matching Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="280" y="160" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="Location Tracking Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="520" y="160" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="9" value="Notification Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="760" y="160" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="Payment Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#3B82F6;fontColor=#ffffff;strokeColor=#3B82F6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="280" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="User Database" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#10B981;fontColor=#ffffff;strokeColor=#10B981;" vertex="1" parent="1">
+          <mxGeometry x="280" y="280" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="Ride Database" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#10B981;fontColor=#ffffff;strokeColor=#10B981;" vertex="1" parent="1">
+          <mxGeometry x="520" y="280" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="Geospatial Database" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#10B981;fontColor=#ffffff;strokeColor=#10B981;" vertex="1" parent="1">
+          <mxGeometry x="760" y="280" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="Payment Database" style="shape=mxgraph.flowchart.database;whiteSpace=wrap;html=1;fillColor=#10B981;fontColor=#ffffff;strokeColor=#10B981;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="15" value="Redis Cache" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F59E0B;fontColor=#ffffff;strokeColor=#F59E0B;" vertex="1" parent="1">
+          <mxGeometry x="280" y="400" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="16" value="Event Queue" style="shape=mxgraph.flowchart.queue;whiteSpace=wrap;html=1;fillColor=#8B5CF6;fontColor=#ffffff;strokeColor=#8B5CF6;" vertex="1" parent="1">
+          <mxGeometry x="520" y="400" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="Object Storage" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#6B7280;fontColor=#ffffff;strokeColor=#6B7280;" vertex="1" parent="1">
+          <mxGeometry x="760" y="400" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="3" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="19" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="6" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="20" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="4" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="5" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="7" target="2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="24" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="25" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="26" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="27" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="16" target="4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="28" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="11" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="29" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="5" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="30" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="12" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="31" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="32" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="16" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="33" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="7" target="6" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="34" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="13" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="35" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="36" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="16" target="7" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="37" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="13" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="38" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="39" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="16" target="8" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="40" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="16" target="9" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="41" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="15" target="9" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="42" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="14" target="10" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="43" value="" style="edgeStyle=orthogonalEdgeStyle;" edge="1" source="16" target="10" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

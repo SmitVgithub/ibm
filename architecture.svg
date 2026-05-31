@@ -1,0 +1,263 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="800" fill="#F8FAFC"/>
+  
+  <!-- Arrow marker definitions -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#6B7280"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3B82F6"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10B981"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="35" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1E293B" text-anchor="middle">BetStream - Real-Time Sports Betting Platform</text>
+  <text x="600" y="55" font-family="Arial, sans-serif" font-size="12" fill="#64748B" text-anchor="middle">Multi-Region Architecture (Mumbai + Singapore) | 100K Concurrent Users | &lt;200ms Bet Processing</text>
+  
+  <!-- Region Labels -->
+  <rect x="30" y="70" width="560" height="720" fill="none" stroke="#3B82F6" stroke-width="2" stroke-dasharray="5,5" rx="10" ry="10"/>
+  <text x="310" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#3B82F6" text-anchor="middle">Mumbai Region (Primary)</text>
+  
+  <rect x="610" y="70" width="560" height="720" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-dasharray="5,5" rx="10" ry="10"/>
+  <text x="890" y="90" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#8B5CF6" text-anchor="middle">Singapore Region (Failover)</text>
+  
+  <!-- CLIENT LAYER -->
+  <!-- Android App -->
+  <rect x="50" y="110" width="100" height="60" rx="8" ry="8" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="100" y="135" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Android App</text>
+  <text x="100" y="150" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Bettors</text>
+  
+  <!-- iOS App -->
+  <rect x="170" y="110" width="100" height="60" rx="8" ry="8" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="220" y="135" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">iOS App</text>
+  <text x="220" y="150" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Bettors</text>
+  
+  <!-- Admin Panel -->
+  <rect x="290" y="110" width="120" height="60" rx="8" ry="8" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+  <text x="350" y="135" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Web Admin Panel</text>
+  <text x="350" y="150" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Management</text>
+  
+  <!-- CDN / Global Load Balancer -->
+  <rect x="150" y="190" width="280" height="45" rx="8" ry="8" fill="#6366F1" stroke="#4F46E5" stroke-width="2"/>
+  <text x="290" y="210" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Global Load Balancer + CDN</text>
+  <text x="290" y="223" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Auto Failover | DNS-based Routing</text>
+  
+  <!-- API Gateway Mumbai -->
+  <rect x="80" y="260" width="180" height="50" rx="8" ry="8" fill="#3B82F6" stroke="#2563EB" stroke-width="2"/>
+  <text x="170" y="282" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">API Gateway</text>
+  <text x="170" y="298" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Rate Limiting | Auth | SSL</text>
+  
+  <!-- WebSocket Gateway Mumbai -->
+  <rect x="280" y="260" width="180" height="50" rx="8" ry="8" fill="#8B5CF6" stroke="#7C3AED" stroke-width="2"/>
+  <text x="370" y="282" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">WebSocket Gateway</text>
+  <text x="370" y="298" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Live Odds | Score Updates</text>
+  
+  <!-- SERVICES LAYER MUMBAI -->
+  <!-- Bet Processing Service -->
+  <rect x="50" y="340" width="130" height="70" rx="8" ry="8" fill="#0EA5E9" stroke="#0284C7" stroke-width="2"/>
+  <text x="115" y="365" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Bet Processing</text>
+  <text x="115" y="380" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Service</text>
+  <text x="115" y="398" font-family="Arial, sans-serif" font-size="8" fill="#E0F2FE" text-anchor="middle">&lt;200ms SLA</text>
+  
+  <!-- Odds Engine -->
+  <rect x="200" y="340" width="130" height="70" rx="8" ry="8" fill="#0EA5E9" stroke="#0284C7" stroke-width="2"/>
+  <text x="265" y="365" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Odds Engine</text>
+  <text x="265" y="380" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Real-time Calc</text>
+  <text x="265" y="398" font-family="Arial, sans-serif" font-size="8" fill="#E0F2FE" text-anchor="middle">Dynamic Pricing</text>
+  
+  <!-- User Service -->
+  <rect x="350" y="340" width="130" height="70" rx="8" ry="8" fill="#0EA5E9" stroke="#0284C7" stroke-width="2"/>
+  <text x="415" y="365" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">User Service</text>
+  <text x="415" y="380" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">KYC | Auth</text>
+  <text x="415" y="398" font-family="Arial, sans-serif" font-size="8" fill="#E0F2FE" text-anchor="middle">State Compliance</text>
+  
+  <!-- Payment Service -->
+  <rect x="50" y="430" width="130" height="70" rx="8" ry="8" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="115" y="455" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Payment Service</text>
+  <text x="115" y="470" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">UPI | Paytm</text>
+  <text x="115" y="488" font-family="Arial, sans-serif" font-size="8" fill="#D1FAE5" text-anchor="middle">Wallet Management</text>
+  
+  <!-- Notification Service -->
+  <rect x="200" y="430" width="130" height="70" rx="8" ry="8" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+  <text x="265" y="455" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Notification</text>
+  <text x="265" y="470" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Push | SMS</text>
+  <text x="265" y="488" font-family="Arial, sans-serif" font-size="8" fill="#FEF3C7" text-anchor="middle">Real-time Alerts</text>
+  
+  <!-- Compliance Service -->
+  <rect x="350" y="430" width="130" height="70" rx="8" ry="8" fill="#EF4444" stroke="#DC2626" stroke-width="2"/>
+  <text x="415" y="455" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Compliance</text>
+  <text x="415" y="470" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">State Regulations</text>
+  <text x="415" y="488" font-family="Arial, sans-serif" font-size="8" fill="#FEE2E2" text-anchor="middle">Geo-fencing</text>
+  
+  <!-- Message Queue Mumbai -->
+  <rect x="150" y="520" width="240" height="40" rx="8" ry="8" fill="#EC4899" stroke="#DB2777" stroke-width="2"/>
+  <text x="270" y="545" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Apache Kafka - Event Streaming</text>
+  
+  <!-- DATA LAYER MUMBAI -->
+  <!-- Redis Cache -->
+  <rect x="50" y="580" width="100" height="55" rx="8" ry="8" fill="#EF4444" stroke="#DC2626" stroke-width="2"/>
+  <text x="100" y="602" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Redis Cluster</text>
+  <text x="100" y="618" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Session | Odds</text>
+  <text x="100" y="630" font-family="Arial, sans-serif" font-size="8" fill="#FEE2E2" text-anchor="middle">Cache</text>
+  
+  <!-- PostgreSQL -->
+  <rect x="170" y="580" width="100" height="55" rx="8" ry="8" fill="#3B82F6" stroke="#2563EB" stroke-width="2"/>
+  <text x="220" y="602" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">PostgreSQL</text>
+  <text x="220" y="618" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Users | Bets</text>
+  <text x="220" y="630" font-family="Arial, sans-serif" font-size="8" fill="#DBEAFE" text-anchor="middle">Primary DB</text>
+  
+  <!-- MongoDB -->
+  <rect x="290" y="580" width="100" height="55" rx="8" ry="8" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="340" y="602" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">MongoDB</text>
+  <text x="340" y="618" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Events | Logs</text>
+  <text x="340" y="630" font-family="Arial, sans-serif" font-size="8" fill="#D1FAE5" text-anchor="middle">Analytics</text>
+  
+  <!-- TimescaleDB -->
+  <rect x="410" y="580" width="100" height="55" rx="8" ry="8" fill="#8B5CF6" stroke="#7C3AED" stroke-width="2"/>
+  <text x="460" y="602" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">TimescaleDB</text>
+  <text x="460" y="618" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Time-series</text>
+  <text x="460" y="630" font-family="Arial, sans-serif" font-size="8" fill="#EDE9FE" text-anchor="middle">Odds History</text>
+  
+  <!-- SINGAPORE REGION (Simplified) -->
+  <!-- API Gateway Singapore -->
+  <rect x="660" y="260" width="180" height="50" rx="8" ry="8" fill="#3B82F6" stroke="#2563EB" stroke-width="2"/>
+  <text x="750" y="282" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">API Gateway</text>
+  <text x="750" y="298" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Failover Instance</text>
+  
+  <!-- WebSocket Gateway Singapore -->
+  <rect x="860" y="260" width="180" height="50" rx="8" ry="8" fill="#8B5CF6" stroke="#7C3AED" stroke-width="2"/>
+  <text x="950" y="282" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">WebSocket Gateway</text>
+  <text x="950" y="298" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Failover Instance</text>
+  
+  <!-- Services Singapore -->
+  <rect x="660" y="340" width="380" height="70" rx="8" ry="8" fill="#0EA5E9" stroke="#0284C7" stroke-width="2"/>
+  <text x="850" y="365" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="white" text-anchor="middle">Microservices Cluster (Replica)</text>
+  <text x="850" y="385" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle">Bet Processing | Odds | User | Payment | Compliance</text>
+  <text x="850" y="400" font-family="Arial, sans-serif" font-size="9" fill="#E0F2FE" text-anchor="middle">Auto-scaling Kubernetes Pods</text>
+  
+  <!-- Kafka Singapore -->
+  <rect x="710" y="430" width="280" height="40" rx="8" ry="8" fill="#EC4899" stroke="#DB2777" stroke-width="2"/>
+  <text x="850" y="455" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="white" text-anchor="middle">Kafka Mirror (Cross-Region Replication)</text>
+  
+  <!-- Data Layer Singapore -->
+  <rect x="660" y="490" width="180" height="55" rx="8" ry="8" fill="#EF4444" stroke="#DC2626" stroke-width="2"/>
+  <text x="750" y="512" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Redis Replica</text>
+  <text x="750" y="528" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Read Replica | Hot Standby</text>
+  
+  <rect x="860" y="490" width="180" height="55" rx="8" ry="8" fill="#3B82F6" stroke="#2563EB" stroke-width="2"/>
+  <text x="950" y="512" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">PostgreSQL Replica</text>
+  <text x="950" y="528" font-family="Arial, sans-serif" font-size="9" fill="white" text-anchor="middle">Async Replication</text>
+  
+  <!-- EXTERNAL INTEGRATIONS -->
+  <text x="890" y="580" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1E293B" text-anchor="middle">External Integrations</text>
+  
+  <!-- Live Score Feed -->
+  <rect x="630" y="595" width="120" height="50" rx="8" ry="8" fill="#F97316" stroke="#EA580C" stroke-width="2"/>
+  <text x="690" y="617" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Live Score API</text>
+  <text x="690" y="632" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">WebSocket Feed</text>
+  
+  <!-- UPI Gateway -->
+  <rect x="770" y="595" width="120" height="50" rx="8" ry="8" fill="#10B981" stroke="#059669" stroke-width="2"/>
+  <text x="830" y="617" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">UPI Gateway</text>
+  <text x="830" y="632" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">NPCI Integration</text>
+  
+  <!-- Paytm -->
+  <rect x="910" y="595" width="120" height="50" rx="8" ry="8" fill="#0EA5E9" stroke="#0284C7" stroke-width="2"/>
+  <text x="970" y="617" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Paytm</text>
+  <text x="970" y="632" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Wallet | PG</text>
+  
+  <!-- State Compliance API -->
+  <rect x="630" y="660" width="120" height="50" rx="8" ry="8" fill="#EF4444" stroke="#DC2626" stroke-width="2"/>
+  <text x="690" y="682" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">State Registry</text>
+  <text x="690" y="697" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Compliance API</text>
+  
+  <!-- Firebase -->
+  <rect x="770" y="660" width="120" height="50" rx="8" ry="8" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+  <text x="830" y="682" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">Firebase</text>
+  <text x="830" y="697" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">Push Notifications</text>
+  
+  <!-- SMS Gateway -->
+  <rect x="910" y="660" width="120" height="50" rx="8" ry="8" fill="#8B5CF6" stroke="#7C3AED" stroke-width="2"/>
+  <text x="970" y="682" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="white" text-anchor="middle">SMS Gateway</text>
+  <text x="970" y="697" font-family="Arial, sans-serif" font-size="8" fill="white" text-anchor="middle">OTP | Alerts</text>
+  
+  <!-- CONNECTIONS -->
+  <!-- Client to GLB -->
+  <line x1="100" y1="170" x2="200" y2="190" stroke="#6B7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="220" y1="170" x2="260" y2="190" stroke="#6B7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="350" y1="170" x2="320" y2="190" stroke="#6B7280" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- GLB to Gateways Mumbai -->
+  <line x1="230" y1="235" x2="170" y2="260" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <line x1="350" y1="235" x2="370" y2="260" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- GLB to Singapore (failover) -->
+  <line x1="430" y1="212" x2="660" y2="280" stroke="#6B7280" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Gateways to Services Mumbai -->
+  <line x1="170" y1="310" x2="115" y2="340" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="170" y1="310" x2="265" y2="340" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="170" y1="310" x2="415" y2="340" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="370" y1="310" x2="265" y2="340" stroke="#8B5CF6" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Services to Kafka -->
+  <line x1="115" y1="410" x2="200" y2="520" stroke="#EC4899" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="265" y1="410" x2="270" y2="520" stroke="#EC4899" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="415" y1="410" x2="340" y2="520" stroke="#EC4899" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Services to Data Layer -->
+  <line x1="115" y1="500" x2="100" y2="580" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="265" y1="500" x2="220" y2="580" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="265" y1="500" x2="340" y2="580" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="265" y1="500" x2="460" y2="580" stroke="#6B7280" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Cross-region replication -->
+  <line x1="510" y1="540" x2="710" y2="450" stroke="#EC4899" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#arrowhead)"/>
+  <text x="600" y="480" font-family="Arial, sans-serif" font-size="8" fill="#EC4899" text-anchor="middle">Cross-Region</text>
+  <text x="600" y="490" font-family="Arial, sans-serif" font-size="8" fill="#EC4899" text-anchor="middle">Replication</text>
+  
+  <!-- DB Replication -->
+  <line x1="510" y1="607" x2="660" y2="517" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowBlue)"/>
+  <line x1="510" y1="607" x2="860" y2="517" stroke="#3B82F6" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowBlue)"/>
+  
+  <!-- Singapore services to external -->
+  <line x1="850" y1="410" x2="690" y2="595" stroke="#F97316" stroke-width="1" marker-end="url(#arrowhead)"/>
+  <line x1="850" y1="410" x2="830" y2="595" stroke="#10B981" stroke-width="1" marker-end="url(#arrowGreen)"/>
+  <line x1="850" y1="410" x2="970" y2="595" stroke="#0EA5E9" stroke-width="1" marker-end="url(#arrowhead)"/>
+  
+  <!-- Mumbai services to external (via Singapore box) -->
+  <line x1="115" y1="500" x2="830" y2="595" stroke="#10B981" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrowGreen)"/>
+  <line x1="265" y1="500" x2="830" y2="660" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Legend -->
+  <rect x="50" y="660" width="180" height="115" rx="6" ry="6" fill="white" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="140" y="680" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#1E293B" text-anchor="middle">Legend</text>
+  
+  <line x1="60" y1="695" x2="90" y2="695" stroke="#6B7280" stroke-width="2"/>
+  <text x="100" y="699" font-family="Arial, sans-serif" font-size="9" fill="#475569">Sync Connection</text>
+  
+  <line x1="60" y1="715" x2="90" y2="715" stroke="#6B7280" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="100" y="719" font-family="Arial, sans-serif" font-size="9" fill="#475569">Async/Replication</text>
+  
+  <rect x="60" y="728" width="25" height="12" rx="2" ry="2" fill="#3B82F6"/>
+  <text x="100" y="738" font-family="Arial, sans-serif" font-size="9" fill="#475569">Gateway/DB</text>
+  
+  <rect x="60" y="748" width="25" height="12" rx="2" ry="2" fill="#10B981"/>
+  <text x="100" y="758" font-family="Arial, sans-serif" font-size="9" fill="#475569">Client/Payment</text>
+  
+  <!-- Performance Stats -->
+  <rect x="250" y="660" width="180" height="115" rx="6" ry="6" fill="white" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="340" y="680" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#1E293B" text-anchor="middle">Performance Specs</text>
+  <text x="260" y="700" font-family="Arial, sans-serif" font-size="9" fill="#475569">• 100K concurrent users</text>
+  <text x="260" y="715" font-family="Arial, sans-serif" font-size="9" fill="#475569">• &lt;200ms bet processing</text>
+  <text x="260" y="730" font-family="Arial, sans-serif" font-size="9" fill="#475569">• 99.99% uptime SLA</text>
+  <text x="260" y="745" font-family="Arial, sans-serif" font-size="9" fill="#475569">• Auto-failover &lt;30s</text>
+  <text x="260" y="760" font-family="Arial, sans-serif" font-size="9" fill="#475569">• Real-time WebSocket</text>
+  
+  <!-- Compliance Note -->
+  <rect x="450" y="660" width="160" height="115" rx="6

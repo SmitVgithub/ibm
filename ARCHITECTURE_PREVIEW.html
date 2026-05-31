@@ -3,9 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ibm - Architecture Visualization</title>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <title>Static Site Builder - Screen Mockups</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-secondary: #12121a;
+            --text: #ffffff;
+            --text-secondary: #a0a0b0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #ec4899;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --shadow-color: rgba(99, 102, 241, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg: #f8f9fc;
+            --bg-secondary: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #64648c;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --shadow-color: rgba(99, 102, 241, 0.2);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,365 +38,1196 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Sora', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
-        .container {
+        /* Mesh Gradient Background */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 70%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                var(--bg);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-secondary);
+            bottom: 10%;
+            left: -50px;
+            animation-delay: -2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-tertiary);
+            top: 50%;
+            right: 10%;
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(5deg); }
+            66% { transform: translateY(10px) rotate(-3deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary), var(--accent-tertiary));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        .theme-toggle {
+            width: 56px;
+            height: 32px;
+            border-radius: 50px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            top: 3px;
+            left: 4px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        [data-theme="light"] .theme-toggle::after {
+            transform: translateX(22px);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--shadow-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 10rem 3rem 4rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text), var(--accent), var(--accent-secondary), var(--accent-tertiary), var(--text));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 6s ease infinite;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Mockups Grid */
+        .mockups-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            padding: 4rem 3rem;
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        .header {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        @media (max-width: 900px) {
+            .mockups-grid {
+                grid-template-columns: 1fr;
+                padding: 2rem 1.5rem;
+            }
         }
 
-        .header h1 {
-            color: #2d3748;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+        /* Mockup Card */
+        .mockup-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid var(--card-border);
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .header .subtitle {
-            color: #718096;
-            font-size: 1.1rem;
+        .mockup-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary), var(--accent-tertiary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .header .meta {
+        .mockup-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mockup-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 60px var(--shadow-color),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .mockup-card:hover::before {
+            opacity: 1;
+            animation: borderGlow 2s ease infinite;
+        }
+
+        /* Browser Frame */
+        .browser-frame {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.2),
+                0 8px 40px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .browser-header {
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            padding: 0.75rem 1rem;
             display: flex;
-            gap: 20px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .header .meta-item {
-            background: #f7fafc;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            color: #4a5568;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            background: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #4a5568;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .tab:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .diagram-container {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: none;
-        }
-
-        .diagram-container.active {
-            display: block;
-        }
-
-        .diagram-title {
-            font-size: 1.8rem;
-            color: #2d3748;
-            margin-bottom: 10px;
-        }
-
-        .diagram-description {
-            color: #718096;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-
-        .diagram-content {
-            display: flex;
-            justify-content: center;
             align-items: center;
-            min-height: 400px;
-            overflow-x: auto;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .mermaid {
-            background: white;
-        }
-
-        .controls {
+        .browser-dots {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
+            gap: 6px;
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .browser-dot:nth-child(1) { background: #ff5f57; }
+        .browser-dot:nth-child(2) { background: #ffbd2e; }
+        .browser-dot:nth-child(3) { background: #28ca42; }
+
+        .browser-url {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-left: 1rem;
+            border: 1px solid var(--card-border);
+        }
+
+        .browser-content {
+            height: 320px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Screen Styles */
+        .screen {
+            height: 100%;
+            padding: 1.5rem;
+            background: var(--bg);
+            overflow-y: auto;
+        }
+
+        .screen-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .screen-logo {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--accent);
+            color: white;
         }
 
         .btn {
-            background: #667eea;
-            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            font-family: 'Sora', sans-serif;
         }
 
-        .btn:hover {
-            background: #5568d3;
-            transform: translateY(-1px);
-        }
-
-        .footer {
-            text-align: center;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
             color: white;
-            margin-top: 40px;
-            font-size: 0.9rem;
+            box-shadow: 0 4px 15px var(--shadow-color);
         }
 
-        .no-diagram {
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--shadow-color);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--card-border);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 0.8rem;
+            font-family: 'Sora', sans-serif;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--shadow-color);
+        }
+
+        .card-inner {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .card-inner:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s ease infinite;
+        }
+
+        .status-dot.online { background: #28ca42; }
+        .status-dot.pending { background: #ffbd2e; }
+        .status-dot.offline { background: #ff5f57; }
+
+        .shimmer {
+            background: linear-gradient(90deg, var(--card-bg) 25%, rgba(255,255,255,0.1) 50%, var(--card-bg) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.65rem;
+            font-weight: 500;
+            background: var(--accent);
+            color: white;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--card-bg);
+            border-radius: 50px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+            border-radius: 50px;
+        }
+
+        /* Mockup Info */
+        .mockup-info {
+            margin-top: 1.5rem;
             text-align: center;
-            color: #a0aec0;
-            padding: 60px 20px;
-            font-size: 1.1rem;
         }
 
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
+        .mockup-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
 
-            .diagram-container {
-                padding: 20px;
-            }
+        .mockup-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
 
-            .tabs {
-                flex-direction: column;
-            }
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--card-border);
+            margin-top: 4rem;
+        }
 
-            .tab {
-                width: 100%;
-            }
+        footer span {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        /* Screen-specific styles */
+        .welcome-hero {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .welcome-hero h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-hero p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .feature-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .feature-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item h4 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-item p {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+
+        .template-card {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .template-preview {
+            width: 60px;
+            height: 45px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+        }
+
+        .template-info h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .template-info p {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: 'Monaco', monospace;
+            font-size: 0.65rem;
+            color: #a0a0b0;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .code-line {
+            margin-bottom: 0.25rem;
+        }
+
+        .code-keyword { color: #c792ea; }
+        .code-string { color: #c3e88d; }
+        .code-tag { color: #89ddff; }
+        .code-attr { color: #ffcb6b; }
+
+        .file-tree {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .file-item.folder { color: var(--accent); font-weight: 600; }
+
+        .deploy-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .deploy-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #28ca42, #20a035);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .deploy-info h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .deploy-info p {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .setting-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--card-bg);
+            border-radius: 50px;
+            position: relative;
+            border: 1px solid var(--card-border);
+        }
+
+        .toggle-switch.active {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 3px;
+            transition: transform 0.2s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(18px);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎨 ibm</h1>
-            <div class="subtitle">Architecture Visualization</div>
-            <div class="meta">
-                <div class="meta-item">📦 Repository: ibm</div>
-                <div class="meta-item">💻 Language: nodejs</div>
-                <div class="meta-item">📅 Generated: 5/30/2026</div>
+    <div class="mesh-bg"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+
+    <header>
+        <div class="logo">Static Site Builder</div>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+    </header>
+
+    <section class="hero">
+        <h1>Pure Static Web Hosting</h1>
+        <p>Build and deploy beautiful static websites with HTML, CSS, and JavaScript. Powered by GitHub Pages for free, fast, and reliable hosting.</p>
+    </section>
+
+    <div class="mockups-grid">
+        <!-- Screen 1: Welcome/Landing -->
+        <div class="mockup-card">
+            <div class="browser-frame">
+                <div class="browser-header">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">staticsite.build</div>
+                </div>
+                <div class="browser-content">
+                    <div class="screen">
+                        <div class="welcome-hero">
+                            <h2>Build Static Sites Fast</h2>
+                            <p>Create stunning websites with pure HTML, CSS, and JavaScript. Deploy instantly to GitHub Pages.</p>
+                            <div style="display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.5rem;">
+                                <button class="btn btn-primary">Get Started Free</button>
+                                <button class="btn btn-secondary">View Examples</button>
+                            </div>
+                        </div>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-icon" style="color: var(--accent);">HTML</div>
+                                <h4>Pure HTML</h4>
+                                <p>Semantic markup</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon" style="color: var(--accent-secondary);">CSS</div>
+                                <h4>Modern CSS</h4>
+                                <p>Grid and Flexbox</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon" style="color: var(--accent-tertiary);">JS</div>
+                                <h4>Vanilla JS</h4>
+                                <p>No frameworks</p>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-icon" style="color: #28ca42;">GH</div>
+                                <h4>GitHub Pages</h4>
+                                <p>Free hosting</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-info">
+                <h3 class="mockup-title">Welcome Landing Page</h3>
+                <p class="mockup-desc">Introduce users to the static site builder with clear value propositions</p>
             </div>
         </div>
 
-        <div class="tabs">
-            <button class="tab active" onclick="showDiagram('system')">System Architecture</button>
-            
-            
-            <button class="tab" onclick="showDiagram('deployment')">Deployment</button>
-            
-            
-            
-            
-        </div>
-
-        <div id="system" class="diagram-container active">
-            <h2 class="diagram-title">System Architecture</h2>
-            <p class="diagram-description">High-level overview of system components and their relationships</p>
-            <div class="diagram-content">
-                <div class="mermaid">graph TB
-    subgraph Client["Client Layer"]
-        DA["📱 Driver App\n(React Native)"]
-        RA["📱 Rider App\n(React Native)"]
-        WA["🖥️ Admin Dashboard\n(React.js)"]
-    end
-
-    subgraph Gateway["API Gateway Layer"]
-        LB["⚖️ Load Balancer\n(Nginx)"]
-        AG["🚪 API Gateway\n(Kong/Express)"]
-        AUTH["🔐 Auth Service\n(JWT/OAuth2)"]
-    end
-
-    subgraph Services["Microservices Layer"]
-        US["👤 User Service\n(Node.js/Express)"]
-        RS["🚗 Ride Service\n(Node.js/Express)"]
-        MS["📍 Matching Service\n(Node.js)"]
-        LS["🗺️ Location Service\n(Node.js/Socket.IO)"]
-        PS["💳 Payment Service\n(Node.js)"]
-        NS["🔔 Notification Service\n(Node.js)"]
-        PRS["💰 Pricing Service\n(Node.js)"]
-    end
-
-    subgraph RealTime["Real-Time Layer"]
-        WS["🔌 WebSocket Server\n(Socket.IO Cluster)"]
-        REDIS_PUB["📡 Redis Pub/Sub"]
-    end
-
-    subgraph Data["Data Layer"]
-        PG[("🐘 PostgreSQL\n+ PostGIS")]
-        REDIS[("⚡ Redis Cluster\n(Cache + Geo)")]
-        MQ["📬 RabbitMQ\n(Message Queue)"]
-        S3["📦 S3/MinIO\n(File Storage)"]
-    end
-
-    subgraph External["External Services"]
-        MAPS["🗺️ Google Maps API"]
-        STRIPE["💳 Stripe/PayPal"]
-        FCM["📲 Firebase FCM"]
-        TWILIO["📱 Twilio SMS"]
-    end
-
-    subgraph Infra["Infrastructure"]
-        DOCKER["🐳 Docker Containers"]
-        K8S["☸️ Kubernetes"]
-        PROM["📊 Prometheus"]
-        GRAF["📈 Grafana"]
-        ELK["📋 ELK Stack"]
-    end
-
-    DA & RA & WA --> LB
-    LB --> AG
-    AG --> AUTH
-    AUTH --> US
-    
-    AG --> US & RS & MS & LS & PS & NS & PRS
-    
-    DA & RA <--> WS
-    WS <--> REDIS_PUB
-    WS <--> LS
-    
-    LS --> REDIS
-    MS --> REDIS
-    RS --> PG
-    US --> PG
-    PS --> PG
-    
-    RS & PS & NS --> MQ
-    MQ --> NS
-    
-    US --> S3
-    
-    MS --> MAPS
-    PRS --> MAPS
-    PS --> STRIPE
-    NS --> FCM & TWILIO
-    
-    Services --> DOCKER --> K8S
-    Services --> PROM --> GRAF
-    Services --> ELK</div>
+        <!-- Screen 2: Template Gallery -->
+        <div class="mockup-card">
+            <div class="browser-frame">
+                <div class="browser-header">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">staticsite.build/templates</div>
+                </div>
+                <div class="browser-content">
+                    <div class="screen">
+                        <div class="screen-nav">
+                            <div class="screen-logo">SSB</div>
+                            <div class="nav-links">
+                                <a class="nav-link" href="#">Home</a>
+                                <a class="nav-link active" href="#">Templates</a>
+                                <a class="nav-link" href="#">Docs</a>
+                            </div>
+                        </div>
+                        <h3 style="font-size: 1rem; margin-bottom: 1rem;">Choose a Template</h3>
+                        <input type="text" class="input-field" placeholder="Search templates...">
+                        <div class="template-card">
+                            <div class="template-preview"></div>
+                            <div class="template-info">
+                                <h4>Portfolio Pro</h4>
+                                <p>Minimal portfolio for developers</p>
+                            </div>
+                            <span class="tag">Popular</span>
+                        </div>
+                        <div class="template-card">
+                            <div class="template-preview" style="background: linear-gradient(135deg, #ec4899, #f472b6);"></div>
+                            <div class="template-info">
+                                <h4>Landing Page</h4>
+                                <p>Product launch template</p>
+                            </div>
+                            <span class="tag" style="background: #28ca42;">New</span>
+                        </div>
+                        <div class="template-card">
+                            <div class="template-preview" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);"></div>
+                            <div class="template-info">
+                                <h4>Blog Starter</h4>
+                                <p>Clean blog layout</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-info">
+                <h3 class="mockup-title">Template Gallery</h3>
+                <p class="mockup-desc">Browse and select from pre-built HTML/CSS templates</p>
             </div>
         </div>
 
-        
-
-        
-
-        
-        <div id="deployment" class="diagram-container">
-            <h2 class="diagram-title">Deployment Architecture</h2>
-            <p class="diagram-description">Infrastructure and deployment pipeline visualization</p>
-            <div class="diagram-content">
-                <div class="mermaid">graph TB
-    subgraph "Development"
-        Dev[Developer]
-        Git[Git Repository]
-    end
-
-    subgraph "CI/CD Pipeline"
-        CI[GitHub Actions]
-        Build[Build & Test]
-        Deploy[Deploy]
-    end
-
-    subgraph "Production Environment"
-        Docker[Docker Host]
-        Container[Application Container]
-    end
-
-    Dev -->|Push Code| Git
-    Git -->|Trigger| CI
-    CI --> Build
-    Build --> Deploy
-    Deploy -->|Deploy| Docker
-    Docker --> Container</div>
+        <!-- Screen 3: Code Editor -->
+        <div class="mockup-card">
+            <div class="browser-frame">
+                <div class="browser-header">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">staticsite.build/editor</div>
+                </div>
+                <div class="browser-content">
+                    <div class="screen" style="padding: 0;">
+                        <div style="display: flex; height: 100%;">
+                            <div style="width: 140px; background: var(--bg-secondary); padding: 1rem; border-right: 1px solid var(--card-border);">
+                                <div style="font-size: 0.7rem; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">FILES</div>
+                                <div class="file-item folder">my-site/</div>
+                                <div class="file-item" style="padding-left: 1rem;">index.html</div>
+                                <div class="file-item" style="padding-left: 1rem;">style.css</div>
+                                <div class="file-item" style="padding-left: 1rem;">script.js</div>
+                                <div class="file-item" style="padding-left: 1rem;">assets/</div>
+                            </div>
+                            <div style="flex: 1; padding: 1rem;">
+                                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                    <span class="tag">index.html</span>
+                                    <span class="tag" style="background: var(--card-bg); color: var(--text-secondary);">style.css</span>
+                                </div>
+                                <div class="code-block">
+                                    <div class="code-line"><span class="code-tag">&lt;!DOCTYPE</span> <span class="code-attr">html</span><span class="code-tag">&gt;</span></div>
+                                    <div class="code-line"><span class="code-tag">&lt;html</span> <span class="code-attr">lang</span>=<span class="code-string">"en"</span><span class="code-tag">&gt;</span></div>
+                                    <div class="code-line"><span class="code-tag">&lt;head&gt;</span></div>
+                                    <div class="code-line" style="padding-left: 1rem;"><span class="code-tag">&lt;title&gt;</span>My Site<span class="code-tag">&lt;/title&gt;</span></div>
+                                    <div class="code-line"><span class="code-tag">&lt;/head&gt;</span></div>
+                                    <div class="code-line"><span class="code-tag">&lt;body&gt;</span></div>
+                                    <div class="code-line" style="padding-left: 1rem;"><span class="code-tag">&lt;h1&gt;</span>Hello World<span class="code-tag">&lt;/h1&gt;</span></div>
+                                    <div class="code-line"><span class="code-tag">&lt;/body&gt;</span></div>
+                                </div>
+                                <button class="btn btn-primary" style="width: 100%;">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-info">
+                <h3 class="mockup-title">Code Editor</h3>
+                <p class="mockup-desc">Edit HTML, CSS, and JavaScript files with syntax highlighting</p>
             </div>
         </div>
-        
 
-        
+        <!-- Screen 4: Live Preview -->
+        <div class="mockup-card">
+            <div class="browser-frame">
+                <div class="browser-header">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">preview.staticsite.build/my-site</div>
+                </div>
+                <div class="browser-content">
+                    <div class="screen" style="background: linear-gradient(180deg, #1a1a2e 0%, #0a0a0f 100%);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Live Preview</span>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.65rem;">Desktop</button>
+                                <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.65rem;">Tablet</button>
+                                <button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.65rem;">Mobile</button>
+                            </div>
+                        </div>
+                        <div style="background: white; border-radius: 12px; padding: 1.5rem; color: #1a1a2e;">
+                            <nav style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                                <span style="font-weight: 700; color: var(--accent);">MySite</span>
+                                <div style="display: flex; gap: 1rem; font-size: 0.7rem; color: #64648c;">
+                                    <span>Home</span>
+                                    <span>About</span>
+                                    <span>Contact</span>
+                                </div>
+                            </nav>
+                            <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Hello World</h1>
+                            <p style="font-size: 0.75rem; color: #64648c; margin-bottom: 1rem;">Welcome to my static website built with pure HTML, CSS, and JavaScript.</p>
+                            <button style="background: var(--accent); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.7rem; font-weight: 600;">Learn More</button>
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem;">
+                            <span class="status-dot online"></span>
+                            <span style="font-size: 0.7rem; color: var(--text-secondary);">Auto-refreshing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-info">
+                <h3 class="mockup-title">Live Preview</h3>
+                <p class="mockup-desc">See real-time changes across desktop, tablet, and mobile views</p>
+            </div>
+        </div>
 
-        
+        <!-- Screen 5: Deploy to GitHub Pages -->
+        <div class="mockup-card">
+            <div class="browser-frame">
+                <div class="browser-header">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">staticsite.build/deploy</div>
+                </div>
+                <div class="browser-content">
+                    <div class="screen">
+                        <div class="screen-nav">
+                            <div class="screen-logo">SSB</div>
+                            <div class="nav-links">
+                                <a class="nav-link" href="#">Editor</a>
+                                <a class="nav-link active" href="#">Deploy</a>
+                                <a class="nav-link" href="#">Settings</a>
+                            </div>
+                        </div>
+                        <div class="deploy-status">
+                            <div class="deploy-icon">OK</div>
+                            <div class="deploy-info">
+                                <h4>Deployment Successful</h4>
+                                <p>Live at username.github.io/my-site</p>
+                            </div>
+                            <span class="status-dot online"></span>
+                        </div>
+                        <div class="card-inner">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <span style="font-size: 0.8rem; font-weight: 600;">GitHub Repository</span>
+                                <span class="tag" style="background: #28ca42;">Connected</span>
+                            </div>
+                            <input type="text" class="input-field" value="github.com/username/my-site" readonly style="margin-bottom: 0;">
+                        </div>
+                        <div class="card-inner">
+                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem;">Build Progress</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.65rem; color: var(--text-secondary);">
+                                <span>Build complete</span>
+                                <span>12s</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">View Live Site</button>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-info">
+                <h3 class="mockup-title">Deploy to GitHub Pages</h3>
+                <p class="mockup-desc">One-click deployment with automatic builds and live URL</p>
+            </div>
+        </div>
 
-        <div class="footer">
-            <p>Generated by Blueprint Brain - The Architect</p>
-            <p>Request: Create a taxi driver application with a real-time ride sharing.</p>
+        <!-- Screen 6: Settings -->
+        <div class="mockup-card">
+            <div class="browser-frame">
+                <div class="browser-header">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">staticsite.build/settings</div>
+                </div>
+                <div class="browser-content">
+                    <div class="screen">
+                        <div class="screen-nav">
+                            <div class="screen-logo">SSB</div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="avatar">JD</div>
+                            </div>
+                        </div>
+                        <h3 style="font-size: 1rem; margin-bottom: 1rem;">Project Settings</h3>
+                        <div class="card-inner" style="padding: 0;">
+                            <div class="setting-row" style="padding: 0.75rem 1rem;">
+                                <span class="setting-label">Custom Domain</span>
+                                <div class="toggle-switch active"></div>
+                            </div>
+                            <div class="setting-row" style="padding: 0.75rem 1rem;">
+                                <span class="setting-label">HTTPS Enabled</span>
+                                <div class="toggle-switch active"></div>
+                            </div>
+                            <div class="setting-row" style="padding: 0.75rem 1rem;">
+                                <span class="setting-label">Auto Deploy</span>
+                                <div class="toggle-switch active"></div>
+                            </div>
+                            <div class="setting-row" style="padding: 0.75rem 1rem; border-bottom: none;">
+                                <span class="setting-label">Minify Assets</span>
+                                <div class="toggle-switch"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <label style="font-size: 0.75rem; font-weight: 500; display: block; margin-bottom: 0.5rem;">Custom Domain</label>
+                            <input type="text" class="input-field" placeholder="www.mysite.com" style="margin-bottom: 0.5rem;">
+                            <button class="btn btn-secondary" style="width: 100%;">Save Domain</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-info">
+                <h3 class="mockup-title">Project Settings</h3>
+                <p class="mockup-desc">Configure custom domains, HTTPS, and deployment options</p>
+            </div>
+        </div>
+
+        <!-- Screen 7: Analytics Dashboard -->
+        <div class="mockup-card">
+            <div class="browser-frame">
+                <div class="browser-header">
+                    <div class="browser-dots">
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                        <div class="browser-dot"></div>
+                    </div>
+                    <div class="browser-url">staticsite.build/analytics</div>
+                </div>
+                <div class="browser-content">
+                    <div class="screen">
+                        <div class="screen-nav">
+                            <div class="screen-logo">SSB</div>
+                            <div class="nav-links">
+                                <a class="nav-link" href="#">Sites</a>
+                                <a class="nav-link active" href="#">Analytics</a>
+                            </div>
+                        </div>
+                        <div class="stat-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">12.4K</div>
+                                <div class="stat-label">Page Views</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">3.2K</div>
+                                <div class="stat-label">Visitors</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">2:34</div>
+                                <div class="stat-label">Avg. Time</div>
+                            </div>
+                        </div>
+                        <div class="card-inner">
+                            <div style="font-size: 0.75rem; font-weight: 600; margin-bottom: 0.75rem;">Traffic This Week</div>
+                            <div style="display: flex; align-items: flex-end; gap: 0.5rem; height: 60px;">
+                                <div style="flex: 1; background: var(--accent); border-radius: 4px; height: 40%;"></div>
+                                <div style="flex: 1; background: var(--accent); border-radius: 4px; height: 60%;"></div>
+                                <div style="flex: 1; background: var(--accent); border-radius: 4px; height: 45%;"></div>
+                                <div style="flex: 1; background: var(--accent); border-radius: 4px; height: 80%;"></div>
+                                <div style="flex: 1; background: var(--accent); border-radius: 4px; height: 100%;"></div>
+                                <div style="flex: 1; background: var(--accent); border-radius: 4px; height: 70%;"></div>
+                                <div style="flex: 1; background: linear-gradient(180deg, var(--accent), var(--accent-secondary)); border-radius: 4px; height: 90%;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.6rem; color: var(--text-secondary);">
+                                <span>Mon</span>
+                                <span>Tue</span>
+                                <span>Wed</span>
+                                <span>Thu</span>
+                                <span>Fri</span>
+                                <span>Sat</span>
+                                <span>Sun</span>
+                            </div>
+                        </div>
+                        <div class="card-inner">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="font-size: 0.75rem; font-weight: 600;">Top Page</div>
+                                    <div style="font-size: 0.65rem; color: var(--text-secondary);">/index.html</div>
+                                </div>
+                                <span style="font-size: 0.9rem; font-weight: 700; color: var(--accent);">8.2K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mockup-info">
+                <h3 class="mockup-title">Analytics Dashboard</h3>
+                <p class="mockup-desc">Track page views, visitors, and engagement metrics</p>
+            </div>
         </div>
     </div>
 
+    <footer>
+        <p>Generated by <span>Blueprint Brain</span></p>
+    </footer>
+
     <script>
-        // Initialize Mermaid
-        mermaid.initialize({ 
-            startOnLoad: true,
-            theme: 'default',
-            securityLevel: 'loose',
-            flowchart: {
-                useMaxWidth: true,
-                htmlLabels: true,
-                curve: 'basis'
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+            } else {
+                body.setAttribute('data-theme', 'light');
             }
         });
 
-        // Tab switching
-        function showDiagram(diagramId) {
-            // Hide all diagrams
-            document.querySelectorAll('.diagram-container').forEach(container => {
-                container.classList.remove('active');
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
             });
+        }, observerOptions);
 
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+        document.querySelectorAll('.mockup-card').forEach(card => {
+            observer.observe(card);
+        });
 
-            // Show selected diagram
-            document.getElementById(diagramId).classList.add('active');
-
-            // Add active class to clicked tab
-            event.target.classList.add('active');
-        }
-
-        // Export functionality (future enhancement)
-        function exportDiagram(format) {
-            alert('Export to ' + format + ' - Coming soon!');
-        }
+        // Add staggered animation delays
+        document.querySelectorAll('.mockup-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
     </script>
 </body>
 </html>

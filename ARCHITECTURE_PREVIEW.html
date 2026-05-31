@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetStream - Real-Time Sports Betting Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-secondary: #12121a;
+            --text: #ffffff;
+            --text-secondary: #a0a0b0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent: #ff6b35;
+            --accent-secondary: #f7c94b;
+            --accent-tertiary: #00d4aa;
+            --success: #00d4aa;
+            --warning: #f7c94b;
+            --danger: #ff4757;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #666680;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        /* Mesh Gradient Background */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(247, 201, 75, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 90%, rgba(255, 107, 53, 0.08) 0%, transparent 40%),
+                var(--bg);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .float-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent);
+            top: -100px;
+            right: -100px;
+            animation-delay: 0s;
+        }
+
+        .float-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-secondary);
+            bottom: 20%;
+            left: -100px;
+            animation-delay: -3s;
+        }
+
+        .float-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--accent-tertiary);
+            bottom: -50px;
+            right: 20%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(5deg); }
+            66% { transform: translateY(20px) rotate(-5deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { border-color: var(--accent); box-shadow: 0 0 20px rgba(255, 107, 53, 0.3); }
+            50% { border-color: var(--accent-secondary); box-shadow: 0 0 30px rgba(247, 201, 75, 0.4); }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .theme-toggle {
+            width: 56px;
+            height: 32px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle::after {
+            content: '🌙';
+            position: absolute;
+            top: 3px;
+            left: 4px;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] .theme-toggle::after {
+            content: '☀️';
+            transform: translateX(22px);
+            background: var(--accent-secondary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 10rem 3rem 4rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary), var(--accent-tertiary), var(--accent));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* Mockups Grid */
+        .mockups-section {
+            padding: 2rem 3rem 6rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .mockups-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+        }
+
+        @media (max-width: 1024px) {
+            .mockups-grid {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+
+        .mockup-card {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mockup-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mockup-card:hover {
+            transform: translateY(-12px) scale(1.02);
+        }
+
+        .mockup-card:hover .device-frame {
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(255, 107, 53, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+        }
+
+        .device-frame {
+            background: var(--bg-secondary);
+            border-radius: 40px;
+            padding: 12px;
+            border: 2px solid var(--card-border);
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.3),
+                0 10px 20px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 28px;
+            background: var(--bg-secondary);
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .device-frame::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 6px;
+            background: var(--card-border);
+            border-radius: 10px;
+            z-index: 11;
+        }
+
+        .screen {
+            background: linear-gradient(180deg, #0d0d14 0%, #151520 100%);
+            border-radius: 32px;
+            min-height: 580px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        [data-theme="light"] .screen {
+            background: linear-gradient(180deg, #f8f8fa 0%, #ffffff 100%);
+        }
+
+        .mockup-info {
+            padding: 1.5rem 0.5rem 0;
+            text-align: center;
+        }
+
+        .mockup-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .mockup-info p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Screen Components */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .status-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .screen-header {
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .screen-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .screen-content {
+            padding: 0 1.25rem 1.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #ff8c5a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--glass-bg);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00e6b8);
+            color: white;
+        }
+
+        /* Cards */
+        .inner-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Input Fields */
+        .input-field {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Shimmer Effect */
+        .shimmer {
+            background: linear-gradient(90deg, 
+                var(--glass-bg) 25%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                var(--glass-bg) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        /* Screen 1: Login */
+        .login-screen .logo-large {
+            text-align: center;
+            padding: 3rem 0 2rem;
+        }
+
+        .login-screen .logo-large .icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .login-screen .logo-large h2 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-screen .tagline {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .social-login {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 0.875rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* Screen 2: Live Matches */
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            background: rgba(255, 71, 87, 0.2);
+            color: var(--danger);
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .live-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--danger);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .match-card {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 201, 75, 0.05));
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 20px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .match-league {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-logo {
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        .team-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .match-score {
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .score {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .match-status {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .odds-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .odds-btn {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .odds-btn:hover {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: var(--accent);
+        }
+
+        .odds-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .odds-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        /* Screen 3: Bet Slip */
+        .bet-slip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            color: white;
+        }
+
+        .bet-count {
+            background: white;
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .bet-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .bet-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .bet-match {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .bet-selection {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .remove-btn {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 71, 87, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .bet-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bet-odds {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .stake-input {
+            width: 100px;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text);
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .potential-win {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(0, 212, 170, 0.05));
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 16px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .potential-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .potential-amount {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        /* Screen 4: Payment */
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-method.selected {
+            border-color: var(--accent);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        .payment-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .payment-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .payment-check {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-method.selected .payment-check {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .amount-display {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 201, 75, 0.05));
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .amount-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .amount-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Screen 5: Bet Confirmation */
+        .success-animation {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success), #00e6b8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.4);
+            animation: scaleIn 0.5s ease;
+        }
+
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .bet-receipt {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .receipt-row:last-child {
+            border-bottom: none;
+        }
+
+        .receipt-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .receipt-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Screen 6: Profile */
+        .profile-header {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(247, 201, 75, 0.1));
+            border-radius: 0 0 30px 30px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .profile-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .profile-id {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .kyc-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--success);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.75rem;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            background: var(--glass-bg);
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .menu-text {
+            flex: 1;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .menu-arrow {
+            color: var(--text-secondary);
+        }
+
+        /* Screen 7: Admin Panel */
+        .admin-screen .screen {
+            background: linear-gradient(180deg, #0a0a12 0%, #101018 100%);
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0 1rem;
+            overflow-x: auto;
+        }
+
+        .admin-nav-item {
+            padding: 0.5rem 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .admin-nav-item.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+        }
+
+        .admin-stat {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        .admin-stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-stat-value {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .admin-stat-change {
+            font-size: 0.7rem;
+            color: var(--success);
+            margin-top: 0.25rem;
+        }
+
+        .admin-chart {
+            margin: 1rem 1.25rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 80px;
+            padding-top: 1rem;
+        }
+
+        .chart-bar {
+            width: 20px;
+            background: linear-gradient(180deg, var(--accent), var(--accent-secondary));
+            border-radius: 4px 4px 0 0;
+            transition: height 0.5s ease;
+        }
+
+        .region-status {
+            margin: 0 1.25rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        .region-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .region-item:last-child {
+            border-bottom: none;
+        }
+
+        .region-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .region-flag {
+            font-size: 1.25rem;
+        }
+
+        .region-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .region-status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--success);
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .region-status-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        footer span {
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem 1.5rem;
+            }
+
+            .hero {
+                padding: 8rem 1.5rem 3rem;
+            }
+
+            .mockups-section {
+                padding: 1rem 1.5rem 4rem;
+            }
+
+            .mockups-grid {
+                gap: 2rem;
+            }
+
+            .device-frame {
+                border-radius: 32px;
+                padding: 10px;
+            }
+
+            .screen {
+                border-radius: 24px;
+                min-height: 520px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-bg"></div>
+    <div class="floating-element float-1"></div>
+    <div class="floating-element float-2"></div>
+    <div class="floating-element float-3"></div>
+
+    <header>
+        <div class="logo">
+            <div class="logo-icon">🏏</div>
+            <span>BetStream</span>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+    </header>
+
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="live-dot"></span>
+            <span>Live IPL Betting Platform</span>
+        </div>
+        <h1>Real-Time Sports Betting for India</h1>
+        <p>Experience lightning-fast 200ms bet processing, live score feeds via WebSocket, and seamless UPI & Paytm payments. Built for 100,000+ concurrent users during IPL matches.</p>
+    </section>
+
+    <section class="mockups-section">
+        <div class="mockups-grid">
+            <!-- Screen 1: Login -->
+            <div class="mockup-card">
+                <div class="device-frame">
+                    <div class="screen login-screen">
+                        <div class="status-bar">
+                            <div class="status-bar-left">9:41</div>
+                            <div class="status-bar-right">
+                                <span>📶</span>
+                                <span>🔋</span>
+                            </div>
+                        </div>
+                        <div class="logo-large">
+                            <div class="icon">🏏</div>
+                            <h2>BetStream</h2>
+                            <p class="tagline">Bet Live. Win Big.</p>
+                        </div>
+                        <div class="screen-content">
+                            <input type="text" class="input-field" placeholder="📱 Mobile Number">
+                            <input type="password" class="input-field" placeholder="🔒 Password">
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+                                Sign In
+                            </button>
+                            <div class="divider">or continue with</div>
+                            <div class="social-login">
+                                <button class="social-btn">📱</button>
+                                <button class="social-btn">G</button>
+                                <button class="social-btn">🆔</button>
+                            </div>
+                            <p style="text-align: center; font-size: 0.8rem; color: var(--text-secondary);">
+                                New to BetStream? <span style="color: var(--accent); font-weight: 600;">Create Account</span>
+                            </p>
+                            <p style="text-align: center; font-size: 0.65rem; color: var(--text-secondary); margin-top: 1.5rem;">
+                                🔒 Regulated by state gambling authorities<br>
+                                Must be 18+ to play. Gamble responsibly.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3>Welcome & Login</h3>
+                    <p>Secure authentication with mobile OTP and social login options</p>
+                </div>
+            </div>
+
+            <!-- Screen 2: Live Matches -->
+            <div class="mockup-card">
+                <div class="device-frame">
+                    <div class="screen">
+                        <div class="status-bar">
+                            <div class="status-bar-left">9:41</div>
+                            <div class="status-bar-right">
+                                <span>📶</span>
+                                <span>🔋</span>
+                            </div>
+                        </div>
+                        <div class="screen-header">
+                            <div class="screen-title">🏏 Live Matches</div>
+                            <div class="live-badge">
+                                <span class="dot"></span>
+                                LIVE
+                            </div>
+                        </div>
+                        <div class="screen-content">
+                            <div class="match-card">
+                                <div class="match-header">
+                                    <span class="match-league">IPL 2024 • Match 45</span>
+                                    <span class="live-badge"><span class="dot"></span> LIVE</span>
+                                </div>
+                                <div class="match-teams">
+                                    <div class="team">
+                                        <div class="team-logo">🦁</div>
+                                        <div class="team-name">CSK</div>
+                                    </div>
+                                    <div class="match-score">
+                                        <div class="score">186/4</div>
+                                        <div class="match-status">18.2 overs</div>
+                                    </div>
+                                    <div class="team">
+                                        <div class="team-logo">👑</div>
+                                        <div class="team-name">MI</div>
+                                    </div>
+                                </div>
+                                <div class="odds-row">
+                                    <div class="odds-btn">
+                                        <div class="odds-label">CSK Win</div>
+                                        <div class="odds-value">1.85</div>
+                                    </div>
+                                    <div class="odds-btn">
+                                        <div class="odds-label">Draw</div>
+                                        <div class="odds-value">15.00</div>
+                                    </div>
+                                    <div class="odds-btn">
+                                        <div class="odds-label">MI Win</div>
+                                        <div class="odds-value">2.10</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="inner-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                    <span style="font-size: 0.8rem; color: var(--text-secondary);">RCB vs KKR</span>
+                                    <span style="font-size: 0.7rem; color: var(--warning);">Starts in 2h</span>
+                                </div>
+                                <div class="odds-row">
+                                    <div class="odds-btn">
+                                        <div class="odds-value" style="font-size: 0.85rem;">1.95</div>
+                                    </div>
+                                    <div class="odds-btn">
+                                        <div class="odds-value" style="font-size: 0.85rem;">12.00</div>
+                                    </div>
+                                    <div class="odds-btn">
+                                        <div class="odds-value" style="font-size: 0.85rem;">1.90</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="shimmer" style="height: 80px; border-radius: 16px; margin-top: 0.75rem;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3>Live Match Dashboard</h3>
+                    <p>Real-time scores via WebSocket with dynamic odds updates</p>
+                </div>
+            </div>
+
+            <!-- Screen 3: Bet Slip -->
+            <div class="mockup-card">
+                <div class="device-frame">
+                    <div class="screen">
+                        <div class="status-bar">
+                            <div class="status-bar-left">9:41</div>
+                            <div class="status-bar-right">
+                                <span>📶</span>
+                                <span>🔋</span>
+                            </div>
+                        </div>
+                        <div class="bet-slip-header">
+                            <span style="font-weight: 700; font-size: 1.1rem;">🎫 Bet Slip</span>
+                            <span class="bet-count">2 Bets</span>
+                        </div>
+                        <div class="screen-content" style="padding-top: 1rem;">
+                            <div class="bet-item">
+                                <div class="bet-item-header">
+                                    <div>
+                                        <div class="bet-match">CSK vs MI • IPL 2024</div>
+                                        <div class="bet-selection">CSK to Win</div>
+                                    </div>
+                                    <button class="remove-btn">✕</button>
+                                </div>
+                                <div class="bet-details">
+                                    <span class="bet-odds">@ 1.85</span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span style="font-size: 0.8rem;">₹</span>
+                                        <input type="text" class="stake-input" value="500">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bet-item">
+                                <div class="bet-item-header">
+                                    <div>
+                                        <div class="bet-match">CSK vs MI • IPL 2024</div>
+                                        <div class="bet-selection">Total Over 180.5</div>
+                                    </div>
+                                    <button class="remove-btn">✕</button>
+                                </div>
+                                <div class="bet-details">
+                                    <span class="bet-odds">@ 1.92</span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span style="font-size: 0.8rem;">₹</span>
+                                        <input type="text" class="stake-input" value="300">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="potential-win">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div class="potential-label">Potential Winnings</div>
+                                        <div class="potential-amount">₹1,501</div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div class="potential-label">Total Stake</div>
+                                        <div style="font-size: 1.1rem; font-weight: 600;">₹800</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-success" style="width: 100%;">
+                                ⚡ Place Bet (200ms)
+                            </button>
+                            <p style="text-align: center; font-size: 0.7rem; color: var(--text-secondary); margin-top: 1rem;">
+                                🔒 Bets processed within 200ms • Odds may change
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3>Bet Slip & Stake</h3>
+                    <p>Lightning-fast 200ms bet processing with real-time odds</p>
+                </div>
+            </div>
+
+            <!-- Screen 4: Payment -->
+            <div class="mockup-card">
+                <div class="device-frame">
+                    <div class="screen">
+                        <div class="status-bar">
+                            <div class="status-bar-left">9:41</div>
+                            <div class="status-bar-right">
+                                <span>📶</span>
+                                <span>🔋</span>
+                            </div>
+                        </div>
+                        <div class="screen-header">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span style="font-size: 1.25rem;">←</span>
+                                <span class="screen-title">Add Funds</span>
+                            </div>
+                        </div>
+                        <div class="screen-content">
+                            <div class="amount-display">
+                                <div class="amount-label">Amount to Add</div>
+                                <div class="amount-value">₹2,000</div>
+                            </div>
+                            <p style="font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;">Select Payment Method</p>
+                            <div class="payment-method selected">
+                                <div class="payment-icon">📱</div>
+                                <div class="payment-info">
+                                    <div class="payment-name">UPI</div>
+                                    <div class="payment-desc">Pay via any UPI app</div>
+                                </div>
+                                <div class="payment-check">✓</div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon" style="background: #00BAF2;">₱</div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Paytm Wallet</div>
+                                    <div class="payment-desc">Balance: ₹5,420</div>
+                                </div>
+                                <div class="payment-check"></div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon">💳</div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Debit/Credit Card</div>
+                                    <div class="payment-desc">Visa, Mastercard, RuPay</div>
+                                </div>
+                                <div class="payment-check"></div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon">🏦</div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Net Banking</div>
+                                    <div class="payment-desc">All major banks</div>
+                                </div>
+                                <div class="payment-check"></div>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                                Pay ₹2,000 via UPI
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3>Payment Gateway</h3>
+                    <p>Seamless UPI, Paytm, and card payments for Indian users</p>
+                </div>
+            </div>
+
+            <!-- Screen 5: Bet Confirmation -->
+            <div class="mockup-card">
+                <div class="device-frame">
+                    <div class="screen">
+                        <div class="status-bar">
+                            <div class="status-bar-left">9:41</div>
+                            <div class="status-bar-right">
+                                <span>📶</span>
+                                <span>🔋</span>
+                            </div>
+                        </div>
+                        <div class="screen-content" style="padding-top: 2rem;">
+                            <div class="success-animation">
+                                <div class="success-icon">✓</div>
+                                <div class="success-title">Bet Placed!</div>
+                                <div class="success-subtitle">Your bet was processed in 187ms</div>
+                            </div>
+                            <div class="bet-receipt">
+                                <div style="font-weight: 600; margin-bottom: 0.75rem; font-size: 0.9rem;">📄 Bet Receipt</div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Bet ID</span>
+                                    <span class="receipt-value">#BET-2024-847291</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Match</span>
+                                    <span class="receipt-value">CSK vs MI</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Selection</span>
+                                    <span class="receipt-value">CSK to Win @ 1.85</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Stake</span>
+                                    <span class="receipt-value">₹500</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Potential Win</span>
+                                    <span class="receipt-value" style="color: var(--success);">₹925</span>
+                                </div>
+                                <div class="receipt-row">
+                                    <span class="receipt-label">Status</span>
+                                    <span class="receipt-value">
+                                        <span style="display: inline-flex; align-items: center; gap: 0.35rem; color: var(--warning);">
+                                            <span style="width: 6px; height: 6px; background: var(--warning); border-radius: 50%; animation: pulse 2s infinite;"></span>
+                                            Pending
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="btn btn-secondary" style="flex: 1;">View My Bets</button>
+                                <button class="btn btn-primary" style="flex: 1;">Bet More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3>Bet Confirmation</h3>
+                    <p>Instant confirmation with detailed receipt and tracking</p>
+                </div>
+            </div>
+
+            <!-- Screen 6: Profile -->
+            <div class="mockup-card">
+                <div class="device-frame">
+                    <div class="screen">
+                        <div class="status-bar">
+                            <div class="status-bar-left">9:41</div>
+                            <div class="status-bar-right">
+                                <span>📶</span>
+                                <span>🔋</span>
+                            </div>
+                        </div>
+                        <div class="profile-header">
+                            <div class="avatar">👤</div>
+                            <div class="profile-name">Rahul Sharma</div>
+                            <div class="profile-id">@rahul_bets • Mumbai</div>
+                            <div class="kyc-badge">✓ KYC Verified</div>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-card">
+                                <div class="stat-value">₹24,580</div>
+                                <div class="stat-label">Wallet Balance</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">67%</div>
+                                <div class="stat-label">Win Rate</div>
+                            </div>
+                        </div>
+                        <div style="padding: 0 1.25rem;">
+                            <div class="menu-item">
+                                <div class="menu-icon">📊</div>
+                                <span class="menu-text">My Bets History</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-icon">💰</div>
+                                <span class="menu-text">Withdraw Funds</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-icon">🔔</div>
+                                <span class="menu-text">Notifications</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-icon">📍</div>
+                                <span class="menu-text">State Regulations</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                            <div class="menu-item">
+                                <div class="menu-icon">🛡️</div>
+                                <span class="menu-text">Responsible Gaming</span>
+                                <span class="menu-arrow">›</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3>User Profile</h3>
+                    <p>KYC verification, wallet management, and state compliance</p>
+                </div>
+            </div>
+
+            <!-- Screen 7: Admin Panel -->
+            <div class="mockup-card admin-screen">
+                <div class="device-frame">
+                    <div class="screen">
+                        <div class="status-bar">
+                            <div class="status-bar-left">9:41</div>
+                            <div class="status-bar-right">
+                                <span>📶</span>
+                                <span>🔋</span>
+                            </div>
+                        </div>
+                        <div class="screen-header">
+                            <div class="screen-title">🎛️ Admin Panel</div>
+                            <div class="live-badge">
+                                <span class="dot"></span>
+                                98,432 Online
+                            </div>
+                        </div>
+                        <div class="admin-nav">
+                            <div class="admin-nav-item active">Overview</div>
+                            <div class="admin-nav-item">Users</div>
+                            <div class="admin-nav-item">Bets</div>
+                            <div class="admin-nav-item">Finance</div>
+                        </div>
+                        <div class="admin-stats">
+                            <div class="admin-stat">
+                                <div class="admin-stat-label">Active Users</div>
+                                <div class="admin-stat-value">98,432</div>
+                                <div class="admin-stat-change">↑ 12.5%</div>
+                            </div>
+                            <div class="admin-stat">
+                                <div class="admin-stat-label">Bets/min</div>
+                                <div class="admin-stat-value">2,847</div>
+                                <div class="admin-stat-change">↑ 8.2%</div>
+                            </div>
+                            <div class="admin-stat">
+                                <div class="admin-stat-label">Avg Latency</div>
+                                <div class="admin-stat-value">142ms</div>
+                                <div class="admin-stat-change" style="color: var(--success);">✓ Healthy</div>
+                            </div>
+                            <div class="admin-stat">
+                                <div class="admin-stat-label">Revenue Today</div>
+                                <div class="admin-stat-value">₹4.2Cr</div>
+                                <div class="admin-stat-change">↑ 23.1%</div>
+                            </div>
+                        </div>
+                        <div class="admin-chart">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Bets Volume (Last 8 Hours)</div>
+                            <div class="chart-bars">
+                                <div class="chart-bar" style="height: 30px;"></div>
+                                <div class="chart-bar" style="height: 45px;"></div>
+                                <div class="chart-bar" style="height: 35px;"></div>
+                                <div class="chart-bar" style="height: 60px;"></div>
+                                <div class="chart-bar" style="height: 75px;"></div>
+                                <div class="chart-bar" style="height: 55px;"></div>
+                                <div class="chart-bar" style="height: 80px;"></div>
+                                <div class="chart-bar" style="height: 70px;"></div>
+                            </div>
+                        </div>
+                        <div class="region-status">
+                            <div style="font-size: 0.8rem; font-weight: 600; margin-bottom: 0.75rem;">🌐 Multi-Region Status</div>
+                            <div class="region-item">
+                                <div class="region-name">
+                                    <span class="region-flag">🇮🇳</span>
+                                    <span class="region-label">Mumbai (Primary)</span>
+                                </div>
+                                <div class="region-status-badge">
+                                    <span class="dot"></span>
+                                    Active
+                                </div>
+                            </div>
+                            <div class="region-item">
+                                <div class="region-name">
+                                    <span class="region-flag">🇸🇬</span>
+                                    <span class="region-label">Singapore (Failover)</span>
+                                </div>
+                                <div class="region-status-badge">
+                                    <span class="dot"></span>
+                                    Standby
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mockup-info">
+                    <h3>Admin Dashboard</h3>
+                    <p>Real-time monitoring with multi-region deployment status</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Generated by <span>Blueprint Brain</span></p>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.mockup-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Animate chart bars on load
+        setTimeout(() => {
+            document.querySelectorAll('.chart-bar').forEach((bar, index) => {
+                const heights = [30, 45, 35, 60, 75, 55, 80, 70];
+                bar.style.height = heights[index] + 'px';
+            });
+        }, 1000);
+
+        // Add hover sound effect simulation (visual feedback)
+        document.querySelectorAll('.mockup-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+        });
+
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                method.classList.add('selected');
+            });
+        });
+
+        // Odds button hover effect
+        document.querySelectorAll('.odds-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                btn.style.transform = 'scale(1.05)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+
+        // Simulate live updates
+        setInterval(() => {
+            const scoreElement = document.querySelector('.score');
+            if (scoreElement) {
+                const currentScore = scoreElement.textContent;
+                // Subtle animation to show "live" feel
+                scoreElement.style.opacity = '0.7';
+                setTimeout(() => {
+                    scoreElement.style.opacity = '1';
+                }, 200);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

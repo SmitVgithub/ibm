@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#6B7280" />
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3B82F6" />
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10B981" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="800" fill="#F8FAFC" rx="0" ry="0" />
+
+  <!-- Title -->
+  <text x="600" y="45" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#1E293B" text-anchor="middle">GitHub Pages Static Website Architecture</text>
+  <text x="600" y="70" font-family="Arial, sans-serif" font-size="14" fill="#6B7280" text-anchor="middle">Pure Static Deployment — HTML / CSS / JavaScript</text>
+
+  <!-- Divider line -->
+  <line x1="80" y1="85" x2="1120" y2="85" stroke="#E2E8F0" stroke-width="2" />
+
+  <!-- ===== LAYER LABELS ===== -->
+  <text x="55" y="185" font-family="Arial, sans-serif" font-size="11" fill="#94A3B8" text-anchor="middle" transform="rotate(-90,55,185)">USER</text>
+  <text x="55" y="370" font-family="Arial, sans-serif" font-size="11" fill="#94A3B8" text-anchor="middle" transform="rotate(-90,55,370)">DELIVERY</text>
+  <text x="55" y="565" font-family="Arial, sans-serif" font-size="11" fill="#94A3B8" text-anchor="middle" transform="rotate(-90,55,565)">SOURCE</text>
+
+  <!-- ===== LAYER 1: USER LAYER ===== -->
+  <rect x="80" y="100" width="1040" height="160" fill="#EFF6FF" rx="12" ry="12" stroke="#BFDBFE" stroke-width="1.5" />
+  <text x="110" y="122" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#3B82F6">USER LAYER</text>
+
+  <!-- Web Browser Box -->
+  <rect x="200" y="135" width="200" height="100" fill="#3B82F6" rx="8" ry="8" />
+  <text x="300" y="163" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Web Browser</text>
+  <text x="300" y="183" font-family="Arial, sans-serif" font-size="12" fill="#DBEAFE" text-anchor="middle">Chrome / Firefox</text>
+  <text x="300" y="200" font-family="Arial, sans-serif" font-size="12" fill="#DBEAFE" text-anchor="middle">Safari / Edge</text>
+  <text x="300" y="218" font-family="Arial, sans-serif" font-size="11" fill="#BFDBFE" text-anchor="middle">Renders HTML/CSS/JS</text>
+
+  <!-- Mobile Browser Box -->
+  <rect x="500" y="135" width="200" height="100" fill="#3B82F6" rx="8" ry="8" />
+  <text x="600" y="163" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Mobile Browser</text>
+  <text x="600" y="183" font-family="Arial, sans-serif" font-size="12" fill="#DBEAFE" text-anchor="middle">iOS Safari</text>
+  <text x="600" y="200" font-family="Arial, sans-serif" font-size="12" fill="#DBEAFE" text-anchor="middle">Android Chrome</text>
+  <text x="600" y="218" font-family="Arial, sans-serif" font-size="11" fill="#BFDBFE" text-anchor="middle">Responsive Layout</text>
+
+  <!-- Any Device Box -->
+  <rect x="800" y="135" width="200" height="100" fill="#6366F1" rx="8" ry="8" />
+  <text x="900" y="163" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Any Device</text>
+  <text x="900" y="183" font-family="Arial, sans-serif" font-size="12" fill="#E0E7FF" text-anchor="middle">Tablet / Desktop</text>
+  <text x="900" y="200" font-family="Arial, sans-serif" font-size="12" fill="#E0E7FF" text-anchor="middle">Laptop / TV</text>
+  <text x="900" y="218" font-family="Arial, sans-serif" font-size="11" fill="#C7D2FE" text-anchor="middle">Web-only access</text>
+
+  <!-- ===== LAYER 2: DELIVERY LAYER ===== -->
+  <rect x="80" y="290" width="1040" height="180" fill="#F0FDF4" rx="12" ry="12" stroke="#BBF7D0" stroke-width="1.5" />
+  <text x="110" y="312" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#10B981">DELIVERY LAYER — GitHub Pages CDN</text>
+
+  <!-- GitHub Pages Box (main) -->
+  <rect x="380" y="325" width="440" height="120" fill="#10B981" rx="8" ry="8" />
+  <text x="600" y="353" font-family="Arial, sans-serif" font-size="17" font-weight="bold" fill="#FFFFFF" text-anchor="middle">GitHub Pages</text>
+  <text x="600" y="374" font-family="Arial, sans-serif" font-size="12" fill="#D1FAE5" text-anchor="middle">https://username.github.io/repo</text>
+  <text x="600" y="394" font-family="Arial, sans-serif" font-size="12" fill="#D1FAE5" text-anchor="middle">Free Static Hosting + Global CDN</text>
+  <text x="600" y="414" font-family="Arial, sans-serif" font-size="12" fill="#D1FAE5" text-anchor="middle">HTTPS / TLS — Custom Domain Support</text>
+  <text x="600" y="432" font-family="Arial, sans-serif" font-size="11" fill="#A7F3D0" text-anchor="middle">Serves: index.html · style.css · script.js · assets</text>
+
+  <!-- CDN Note left -->
+  <rect x="130" y="340" width="210" height="90" fill="#FFFFFF" rx="8" ry="8" stroke="#6EE7B7" stroke-width="1.5" />
+  <text x="235" y="363" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#059669" text-anchor="middle">CDN Edge Nodes</text>
+  <text x="235" y="383" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">Globally distributed</text>
+  <text x="235" y="400" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">Low-latency delivery</text>
+  <text x="235" y="417" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">Cached static assets</text>
+
+  <!-- HTTPS Note right -->
+  <rect x="860" y="340" width="210" height="90" fill="#FFFFFF" rx="8" ry="8" stroke="#6EE7B7" stroke-width="1.5" />
+  <text x="965" y="363" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#059669" text-anchor="middle">HTTPS / Security</text>
+  <text x="965" y="383" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">Auto TLS certificate</text>
+  <text x="965" y="400" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">No server-side code</text>
+  <text x="965" y="417" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">Zero backend attack surface</text>
+
+  <!-- ===== LAYER 3: SOURCE LAYER ===== -->
+  <rect x="80" y="500" width="1040" height="200" fill="#FDF4FF" rx="12" ry="12" stroke="#E9D5FF" stroke-width="1.5" />
+  <text x="110" y="522" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#8B5CF6">SOURCE LAYER — GitHub Repository</text>
+
+  <!-- GitHub Repo Box -->
+  <rect x="160" y="540" width="220" height="130" fill="#8B5CF6" rx="8" ry="8" />
+  <text x="270" y="566" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#FFFFFF" text-anchor="middle">GitHub Repository</text>
+  <text x="270" y="586" font-family="Arial, sans-serif" font-size="12" fill="#EDE9FE" text-anchor="middle">Version Control (Git)</text>
+  <text x="270" y="604" font-family="Arial, sans-serif" font-size="11" fill="#DDD6FE" text-anchor="middle">main / gh-pages branch</text>
+  <text x="270" y="622" font-family="Arial, sans-serif" font-size="11" fill="#DDD6FE" text-anchor="middle">Commit triggers deploy</text>
+  <text x="270" y="640" font-family="Arial, sans-serif" font-size="11" fill="#DDD6FE" text-anchor="middle">Pull Request workflow</text>
+  <text x="270" y="658" font-family="Arial, sans-serif" font-size="11" fill="#C4B5FD" text-anchor="middle">Free public hosting</text>
+
+  <!-- HTML File Box -->
+  <rect x="430" y="540" width="160" height="130" fill="#FFFFFF" rx="8" ry="8" stroke="#C4B5FD" stroke-width="2" />
+  <text x="510" y="566" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#7C3AED" text-anchor="middle">HTML</text>
+  <text x="510" y="586" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">index.html</text>
+  <text x="510" y="604" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">about.html</text>
+  <text x="510" y="622" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">contact.html</text>
+  <text x="510" y="645" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Structure &amp;</text>
+  <text x="510" y="660" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Content</text>
+
+  <!-- CSS File Box -->
+  <rect x="610" y="540" width="160" height="130" fill="#FFFFFF" rx="8" ry="8" stroke="#C4B5FD" stroke-width="2" />
+  <text x="690" y="566" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#7C3AED" text-anchor="middle">CSS</text>
+  <text x="690" y="586" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">style.css</text>
+  <text x="690" y="604" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">responsive.css</text>
+  <text x="690" y="622" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">animations.css</text>
+  <text x="690" y="645" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Styling &amp;</text>
+  <text x="690" y="660" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Layout</text>
+
+  <!-- JS File Box -->
+  <rect x="790" y="540" width="160" height="130" fill="#FFFFFF" rx="8" ry="8" stroke="#C4B5FD" stroke-width="2" />
+  <text x="870" y="566" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#7C3AED" text-anchor="middle">JavaScript</text>
+  <text x="870" y="586" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">script.js</text>
+  <text x="870" y="604" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">app.js</text>
+  <text x="870" y="622" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">utils.js</text>
+  <text x="870" y="645" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Interactivity &amp;</text>
+  <text x="870" y="660" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Logic</text>
+
+  <!-- Assets Box -->
+  <rect x="970" y="540" width="120" height="130" fill="#FFFFFF" rx="8" ry="8" stroke="#C4B5FD" stroke-width="2" />
+  <text x="1030" y="566" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#7C3AED" text-anchor="middle">Assets</text>
+  <text x="1030" y="586" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">images/</text>
+  <text x="1030" y="604" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">fonts/</text>
+  <text x="1030" y="622" font-family="Arial, sans-serif" font-size="11" fill="#6B7280" text-anchor="middle">icons/</text>
+  <text x="1030" y="645" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Static</text>
+  <text x="1030" y="660" font-family="Arial, sans-serif" font-size="11" fill="#9CA3AF" text-anchor="middle">Files</text>
+
+  <!-- ===== ARROWS ===== -->
+
+  <!-- Browser to GitHub Pages (HTTPS request) -->
+  <line x1="300" y1="235" x2="490" y2="325" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow-blue)" stroke-dasharray="6,3" />
+  <text x="360" y="285" font-family="Arial, sans-serif" font-size="10" fill="#3B82F6" text-anchor="middle">HTTPS Request</text>
+
+  <!-- Mobile Browser to GitHub Pages -->
+  <line x1="600" y1="235" x2="600" y2="325" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow-blue)" />
+  <text x="640" y="285" font-family="Arial, sans-serif" font-size="10" fill="#3B82F6">GET /</text>
+
+  <!-- Any Device to GitHub Pages -->
+  <line x1="900" y1="235" x2="710" y2="325" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow-blue)" stroke-dasharray="6,3" />
+  <text x="840" y="285" font-family="Arial, sans-serif" font-size="10" fill="#3B82F6" text-anchor="middle">HTTPS Request</text>
+
+  <!-- GitHub Pages response back to browsers -->
+  <line x1="480" y1="325" x2="295" y2="235" stroke="#10B981" stroke-width="1.5" marker-end="url(#arrow-green)" stroke-dasharray="4,3" />
+  <text x="355" y="308" font-family="Arial, sans-serif" font-size="10" fill="#10B981" text-anchor="middle">HTML/CSS/JS</text>
+
+  <!-- GitHub Pages to CDN -->
+  <line x1="380" y1="385" x2="340" y2="385" stroke="#10B981" stroke-width="2" marker-end="url(#arrow-green)" />
+
+  <!-- GitHub Pages to HTTPS box -->
+  <line x1="820" y1="385" x2="860" y2="385" stroke="#10B981" stroke-width="2" marker-end="url(#arrow-green)" />
+
+  <!-- GitHub Repo to GitHub Pages (deploy) -->
+  <line x1="270" y1="540" x2="490" y2="468" stroke="#8B5CF6" stroke-width="2.5" marker-end="url(#arrow)" />
+  <text x="330" y="510" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#7C3AED" text-anchor="middle">Auto Deploy</text>
+  <text x="330" y="524" font-family="Arial, sans-serif" font-size="10" fill="#8B5CF6" text-anchor="middle">on git push</text>
+
+  <!-- HTML/CSS/JS to Repo arrows -->
+  <line x1="510" y1="540" x2="400" y2="600" stroke="#8B5CF6" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,3" />
+  <line x1="690" y1="540" x2="400" y2="610" stroke="#8B5CF6" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,3" />
+  <line x1="870" y1="540" x2="400" y2="620" stroke="#8B5CF6" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,3" />
+  <line x1="1030" y1="540" x2="400" y2="630" stroke="#8B5CF6" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,3" />
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="80" y="720" width="1040" height="60" fill="#F1F5F9" rx="8" ry="8" stroke="#E2E8F0" stroke-width="1" />
+  <text x="140" y="743" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#475569">Legend:</text>
+  <line x1="200" y1="740" x2="240" y2="740" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow-blue)" />
+  <text x="248" y="744" font-family="Arial, sans-serif" font-size="11" fill="#475569">HTTPS Request</text>
+  <line x1="360" y1="740" x2="400" y2="740" stroke="#10B981" stroke-width="2" marker-end="url(#arrow-green)" stroke-dasharray="4,3" />
+  <text x="408" y="744" font-family="Arial, sans-serif" font-size="11" fill="#475569">Static File Response</text>
+  <line x1="540" y1="740" x2="580" y2="740" stroke="#8B5CF6" stroke-width="2" marker-end="url(#arrow)" />
+  <text x="588" y="744" font-family="Arial, sans-serif" font-size="11" fill="#475569">Auto Deploy (git push)</text>
+  <text x="760" y="744" font-family="Arial, sans-serif" font-size="11" fill="#6B7280">No backend · No database · No server · Pure static files only</text>
+  <text x="600" y="765" font-family="Arial, sans-serif" font-size="11" fill="#94A3B8" text-anchor="middle">GitHub Pages — Free hosting for static HTML/CSS/JS websites · Web-only access</text>
+
+</svg>

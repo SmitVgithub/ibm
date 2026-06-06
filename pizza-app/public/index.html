@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>PizzaRush 🍕</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header-content">
+        <h1>🍕 PizzaRush</h1>
+        <button class="cart-btn" onclick="toggleCart()">
+          🛒 <span id="cart-count">0</span>
+        </button>
+      </div>
+    </header>
+
+    <div id="screen-menu" class="screen active">
+      <div class="hero">
+        <h2>Hot & Fresh Pizza</h2>
+        <p>Delivered in 30 mins or free!</p>
+      </div>
+      <div class="size-selector">
+        <h3>Choose Size</h3>
+        <div class="size-options">
+          <button class="size-btn active" data-size="small" onclick="selectSize(this)">S<br><small>8"</small></button>
+          <button class="size-btn" data-size="medium" onclick="selectSize(this)">M<br><small>12"</small></button>
+          <button class="size-btn" data-size="large" onclick="selectSize(this)">L<br><small>16"</small></button>
+        </div>
+      </div>
+      <h3 class="section-title">Our Menu</h3>
+      <div id="menu-grid" class="menu-grid"></div>
+    </div>
+
+    <div id="screen-cart" class="screen">
+      <div class="screen-header">
+        <button class="back-btn" onclick="toggleCart()">← Back</button>
+        <h2>Your Order</h2>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div id="cart-empty" class="empty-state">🛒<br>Your cart is empty</div>
+      <div id="cart-summary" class="cart-summary hidden">
+        <div class="total-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+        <div class="total-row"><span>Delivery</span><span>$2.99</span></div>
+        <div class="total-row total-final"><span>Total</span><span id="grand-total">$0.00</span></div>
+        <button class="btn-primary" onclick="showCheckout()">Proceed to Checkout</button>
+      </div>
+    </div>
+
+    <div id="screen-checkout" class="screen">
+      <div class="screen-header">
+        <button class="back-btn" onclick="showScreen('screen-cart')">← Back</button>
+        <h2>Checkout</h2>
+      </div>
+      <form id="checkout-form" class="checkout-form" onsubmit="placeOrder(event)">
+        <div class="form-group">
+          <label>📍 Delivery Address</label>
+          <input type="text" id="address" placeholder="Enter your full address" required>
+        </div>
+        <div class="form-group">
+          <label>📞 Phone Number</label>
+          <input type="tel" id="phone" placeholder="+1 (555) 000-0000" required>
+        </div>
+        <div class="form-group">
+          <label>💳 Payment</label>
+          <div class="payment-options">
+            <label class="radio-option">
+              <input type="radio" name="payment" value="card" checked> Credit Card
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="payment" value="cash"> Cash on Delivery
+            </label>
+          </div>
+        </div>
+        <div id="card-fields">
+          <div class="form-group">
+            <input type="text" placeholder="Card Number" maxlength="19">
+          </div>
+          <div class="form-row">
+            <input type="text" placeholder="MM/YY" maxlength="5">
+            <input type="text" placeholder="CVV" maxlength="3">
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Place Order 🍕</button>
+      </form>
+    </div>
+
+    <div id="screen-confirmation" class="screen">
+      <div class="confirmation">
+        <div class="confirm-icon">✅</div>
+        <h2>Order Confirmed!</h2>
+        <p id="confirm-order-id"></p>
+        <div class="tracking-card">
+          <div class="track-steps">
+            <div class="track-step active">✅ Confirmed</div>
+            <div class="track-step active">👨‍🍳 Preparing</div>
+            <div class="track-step">🚴 On the way</div>
+            <div class="track-step">🏠 Delivered</div>
+          </div>
+          <p class="eta">⏱ Estimated: <strong id="eta-time">25-35 mins</strong></p>
+        </div>
+        <div id="order-summary-final" class="order-summary-final"></div>
+        <button class="btn-primary" onclick="newOrder()">Order Again 🍕</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

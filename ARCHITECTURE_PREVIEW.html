@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Screen Mockups</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-secondary: #12121a;
+            --text: #ffffff;
+            --text-secondary: #a0a0b0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --accent: #8b5cf6;
+            --accent-secondary: #c084fc;
+            --accent-glow: rgba(139, 92, 246, 0.4);
+            --gradient-1: #8b5cf6;
+            --gradient-2: #ec4899;
+            --gradient-3: #06b6d4;
+        }
+
+        [data-theme="light"] {
+            --bg: #f8f8fc;
+            --bg-secondary: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #64648a;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-border: rgba(139, 92, 246, 0.2);
+            --accent-glow: rgba(139, 92, 246, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                border-color: var(--gradient-1);
+            }
+            33% {
+                border-color: var(--gradient-2);
+            }
+            66% {
+                border-color: var(--gradient-3);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        .mesh-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 90%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+                var(--bg);
+        }
+
+        .floating-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--gradient-2), var(--gradient-3));
+            top: 60%;
+            right: 10%;
+            animation-delay: -3s;
+        }
+
+        .shape-3 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(135deg, var(--gradient-3), var(--gradient-1));
+            bottom: 10%;
+            left: 30%;
+            animation-delay: -5s;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 15, 0.7);
+            border-bottom: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] header {
+            background: rgba(248, 248, 252, 0.8);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        .theme-toggle {
+            width: 56px;
+            height: 32px;
+            border-radius: 50px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        [data-theme="light"] .toggle-thumb {
+            transform: translateX(24px);
+        }
+
+        .hero {
+            padding: 10rem 3rem 4rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3), var(--gradient-1));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 6s ease infinite;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            font-weight: 300;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .mockups-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+            padding: 4rem 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .mockups-grid {
+                grid-template-columns: 1fr;
+                padding: 2rem 1.5rem;
+            }
+            
+            header {
+                padding: 1rem 1.5rem;
+            }
+            
+            .hero {
+                padding: 8rem 1.5rem 3rem;
+            }
+        }
+
+        .mockup-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 4px 6px rgba(0, 0, 0, 0.1),
+                0 10px 40px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+        }
+
+        .mockup-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .mockup-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            border-color: var(--accent);
+            box-shadow: 
+                0 8px 16px rgba(0, 0, 0, 0.15),
+                0 20px 60px rgba(0, 0, 0, 0.2),
+                0 0 40px var(--accent-glow),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+
+        .mockup-card.featured {
+            border: 2px solid transparent;
+            background: 
+                linear-gradient(var(--bg-secondary), var(--bg-secondary)) padding-box,
+                linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3)) border-box;
+            animation: borderGlow 4s ease infinite;
+        }
+
+        .laptop-frame {
+            background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
+            border-radius: 16px 16px 0 0;
+            padding: 12px 12px 0;
+            position: relative;
+        }
+
+        .laptop-notch {
+            width: 80px;
+            height: 6px;
+            background: #3a3a4a;
+            border-radius: 3px;
+            margin: 0 auto 12px;
+        }
+
+        .laptop-screen {
+            background: #ffffff;
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+            aspect-ratio: 16/10;
+        }
+
+        .laptop-base {
+            background: linear-gradient(180deg, #3a3a4a, #2a2a3a);
+            height: 16px;
+            border-radius: 0 0 4px 4px;
+            position: relative;
+        }
+
+        .laptop-base::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: #4a4a5a;
+            border-radius: 2px;
+        }
+
+        .screen-content {
+            height: 100%;
+            overflow: hidden;
+            font-size: 10px;
+        }
+
+        /* Screen 1: Welcome/Landing */
+        .screen-landing {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .landing-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .landing-logo {
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+        }
+
+        .landing-nav-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .landing-nav-links span {
+            color: rgba(255,255,255,0.6);
+            font-size: 9px;
+        }
+
+        .landing-hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .landing-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .landing-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .landing-subtitle {
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 16px;
+        }
+
+        .landing-cta {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 9px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Screen 2: Projects Gallery */
+        .screen-projects {
+            background: #0f0f1a;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .projects-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .projects-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .projects-filter {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+        }
+
+        .filter-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 8px;
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+        }
+
+        .filter-pill.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: #fff;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 0 16px 16px;
+        }
+
+        .project-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .project-thumb {
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .project-thumb.orange {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .project-thumb.teal {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .project-thumb.green {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+        }
+
+        .project-info {
+            padding: 8px;
+        }
+
+        .project-name {
+            font-size: 9px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .project-type {
+            font-size: 7px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Screen 3: Project Detail */
+        .screen-detail {
+            background: #0f0f1a;
+            height: 100%;
+        }
+
+        .detail-hero {
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            position: relative;
+        }
+
+        .detail-back {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 24px;
+            height: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 10px;
+        }
+
+        .detail-content {
+            padding: 16px;
+        }
+
+        .detail-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .detail-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .meta-item {
+            font-size: 8px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .detail-desc {
+            font-size: 9px;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .detail-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            font-size: 7px;
+            color: #8b5cf6;
+        }
+
+        /* Screen 4: About Page */
+        .screen-about {
+            background: #0f0f1a;
+            height: 100%;
+            padding: 16px;
+        }
+
+        .about-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .about-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        }
+
+        .about-info h3 {
+            font-size: 12px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .about-info p {
+            font-size: 9px;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .about-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 7px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .about-section-title {
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .skills-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .skill-tag {
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 8px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Screen 5: Contact Form */
+        .screen-contact {
+            background: #0f0f1a;
+            height: 100%;
+            padding: 16px;
+        }
+
+        .contact-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .contact-subtitle {
+            font-size: 9px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-label {
+            font-size: 8px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 9px;
+            color: #fff;
+        }
+
+        .form-textarea {
+            height: 50px;
+            resize: none;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* Screen 6: Settings */
+        .screen-settings {
+            background: #0f0f1a;
+            height: 100%;
+        }
+
+        .settings-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .settings-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .settings-section {
+            padding: 12px 16px;
+        }
+
+        .settings-section-title {
+            font-size: 8px;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .settings-item-label {
+            font-size: 10px;
+            color: #fff;
+        }
+
+        .settings-toggle {
+            width: 32px;
+            height: 18px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 9px;
+            position: relative;
+        }
+
+        .settings-toggle.active {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        }
+
+        .settings-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .settings-toggle.active::after {
+            left: auto;
+            right: 2px;
+        }
+
+        .settings-value {
+            font-size: 9px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Screen 7: Success State */
+        .screen-success {
+            background: #0f0f1a;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            animation: pulse 2s ease infinite;
+        }
+
+        .success-check {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #fff;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .success-check::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 8px;
+            width: 6px;
+            height: 10px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .success-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .success-message {
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 20px;
+        }
+
+        .success-btn {
+            padding: 10px 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            font-size: 10px;
+            color: #fff;
+        }
+
+        /* Shimmer effect */
+        .shimmer {
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.05) 25%, 
+                rgba(255,255,255,0.15) 50%, 
+                rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .mockup-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mockup-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        footer span {
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #43e97b;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 2s ease infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="mesh-background"></div>
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+
+    <header>
+        <div class="logo">Portfolio</div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <div class="toggle-thumb"></div>
+        </button>
+    </header>
+
+    <section class="hero">
+        <h1 class="hero-title">Static Portfolio Mockups</h1>
+        <p class="hero-subtitle">A stunning personal portfolio website with project showcase, about section, and simple contact form. Clean, modern, and fully responsive.</p>
+    </section>
+
+    <div class="mockups-grid">
+        <!-- Screen 1: Landing/Welcome -->
+        <div class="mockup-card featured">
+            <div class="laptop-frame">
+                <div class="laptop-notch"></div>
+                <div class="laptop-screen">
+                    <div class="screen-content screen-landing">
+                        <nav class="landing-nav">
+                            <div class="landing-logo">JD</div>
+                            <div class="landing-nav-links">
+                                <span>Work</span>
+                                <span>About</span>
+                                <span>Contact</span>
+                            </div>
+                        </nav>
+                        <div class="landing-hero">
+                            <div class="landing-avatar">J</div>
+                            <h1 class="landing-title">John Designer</h1>
+                            <p class="landing-subtitle">Creative Developer & UI Designer based in San Francisco <span class="status-dot"></span></p>
+                            <div class="landing-cta">
+                                <div class="btn-primary">View Projects</div>
+                                <div class="btn-secondary">Get in Touch</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="laptop-base"></div>
+            <h3 class="mockup-title">Welcome Landing</h3>
+            <p class="mockup-description">Hero section with personal branding and call-to-action buttons</p>
+        </div>
+
+        <!-- Screen 2: Projects Gallery -->
+        <div class="mockup-card">
+            <div class="laptop-frame">
+                <div class="laptop-notch"></div>
+                <div class="laptop-screen">
+                    <div class="screen-content screen-projects">
+                        <div class="projects-header">
+                            <div class="projects-title">Selected Work</div>
+                        </div>
+                        <div class="projects-filter">
+                            <span class="filter-pill active">All</span>
+                            <span class="filter-pill">Web Design</span>
+                            <span class="filter-pill">Branding</span>
+                            <span class="filter-pill">Mobile</span>
+                        </div>
+                        <div class="projects-grid">
+                            <div class="project-card">
+                                <div class="project-thumb"></div>
+                                <div class="project-info">
+                                    <div class="project-name">Fintech Dashboard</div>
+                                    <div class="project-type">Web Design</div>
+                                </div>
+                            </div>
+                            <div class="project-card">
+                                <div class="project-thumb orange"></div>
+                                <div class="project-info">
+                                    <div class="project-name">E-commerce App</div>
+                                    <div class="project-type">Mobile Design</div>
+                                </div>
+                            </div>
+                            <div class="project-card">
+                                <div class="project-thumb teal"></div>
+                                <div class="project-info">
+                                    <div class="project-name">SaaS Platform</div>
+                                    <div class="project-type">Web Design</div>
+                                </div>
+                            </div>
+                            <div class="project-card">
+                                <div class="project-thumb green"></div>
+                                <div class="project-info">
+                                    <div class="project-name">Brand Identity</div>
+                                    <div class="project-type">Branding</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="laptop-base"></div>
+            <h3 class="mockup-title">Projects Gallery</h3>
+            <p class="mockup-description">Filterable grid showcasing portfolio work with thumbnails</p>
+        </div>
+
+        <!-- Screen 3: Project Detail -->
+        <div class="mockup-card">
+            <div class="laptop-frame">
+                <div class="laptop-notch"></div>
+                <div class="laptop-screen">
+                    <div class="screen-content screen-detail">
+                        <div class="detail-hero">
+                            <div class="detail-back">←</div>
+                        </div>
+                        <div class="detail-content">
+                            <h2 class="detail-title">Fintech Dashboard</h2>
+                            <div class="detail-meta">
+                                <span class="meta-item">Client: TechCorp</span>
+                                <span class="meta-item">Year: 2024</span>
+                                <span class="meta-item">Role: Lead Designer</span>
+                            </div>
+                            <p class="detail-desc">A comprehensive financial dashboard designed to help users track investments, analyze market trends, and manage their portfolio with intuitive data visualizations.</p>
+                            <div class="detail-tags">
+                                <span class="tag">UI Design</span>
+                                <span class="tag">Figma</span>
+                                <span class="tag">React</span>
+                                <span class="tag">Data Viz</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="laptop-base"></div>
+            <h3 class="mockup-title">Project Detail</h3>
+            <p class="mockup-description">In-depth view of individual project with description and tags</p>
+        </div>
+
+        <!-- Screen 4: About Page -->
+        <div class="mockup-card">
+            <div class="laptop-frame">
+                <div class="laptop-notch"></div>
+                <div class="laptop-screen">
+                    <div class="screen-content screen-about">
+                        <div class="about-header">
+                            <div class="about-avatar"></div>
+                            <div class="about-info">
+                                <h3>John Designer</h3>
+                                <p>Creative Developer</p>
+                                <p>San Francisco, CA</p>
+                            </div>
+                        </div>
+                        <div class="about-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">8+</div>
+                                <div class="stat-label">Years Exp</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">120+</div>
+                                <div class="stat-label">Projects</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">50+</div>
+                                <div class="stat-label">Clients</div>
+                            </div>
+                        </div>
+                        <div class="about-section-title">Skills & Tools</div>
+                        <div class="skills-grid">
+                            <span class="skill-tag">Figma</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">TypeScript</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">UI/UX</span>
+                            <span class="skill-tag">Framer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="laptop-base"></div>
+            <h3 class="mockup-title">About Me</h3>
+            <p class="mockup-description">Personal bio with experience stats and skill tags</p>
+        </div>
+
+        <!-- Screen 5: Contact Form -->
+        <div class="mockup-card featured">
+            <div class="laptop-frame">
+                <div class="laptop-notch"></div>
+                <div class="laptop-screen">
+                    <div class="screen-content screen-contact">
+                        <h2 class="contact-title">Get in Touch</h2>
+                        <p class="contact-subtitle">Have a project in mind? Let's create something amazing together.</p>
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <div class="form-input">Sarah Johnson</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <div class="form-input">sarah@company.com</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <div class="form-input form-textarea shimmer"></div>
+                        </div>
+                        <div class="form-submit">Send Message</div>
+                    </div>
+                </div>
+            </div>
+            <div class="laptop-base"></div>
+            <h3 class="mockup-title">Contact Form</h3>
+            <p class="mockup-description">Simple contact form for inquiries and collaboration requests</p>
+        </div>
+
+        <!-- Screen 6: Settings -->
+        <div class="mockup-card">
+            <div class="laptop-frame">
+                <div class="laptop-notch"></div>
+                <div class="laptop-screen">
+                    <div class="screen-content screen-settings">
+                        <div class="settings-header">
+                            <div class="settings-title">Settings</div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-section-title">Appearance</div>
+                            <div class="settings-item">
+                                <span class="settings-item-label">Dark Mode</span>
+                                <div class="settings-toggle active"></div>
+                            </div>
+                            <div class="settings-item">
+                                <span class="settings-item-label">Animations</span>
+                                <div class="settings-toggle active"></div>
+                            </div>
+                        </div>
+                        <div class="settings-section">
+                            <div class="settings-section-title">Contact Info</div>
+                            <div class="settings-item">
+                                <span class="settings-item-label">Email</span>
+                                <span class="settings-value">john@design.co</span>
+                            </div>
+                            <div class="settings-item">
+                                <span class="settings-item-label">Location</span>
+                                <span class="settings-value">San Francisco</span>
+                            </div>
+                            <div class="settings-item">
+                                <span class="settings-item-label">Availability</span>
+                                <span class="settings-value">Open to work</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="laptop-base"></div>
+            <h3 class="mockup-title">Site Settings</h3>
+            <p class="mockup-description">Customize appearance and manage contact information</p>
+        </div>
+
+        <!-- Screen 7: Success State -->
+        <div class="mockup-card">
+            <div class="laptop-frame">
+                <div class="laptop-notch"></div>
+                <div class="laptop-screen">
+                    <div class="screen-content screen-success">
+                        <div class="success-icon">
+                            <div class="success-check"></div>
+                        </div>
+                        <h2 class="success-title">Message Sent!</h2>
+                        <p class="success-message">Thank you for reaching out. I'll get back to you within 24 hours.</p>
+                        <div class="success-btn">Back to Home</div>
+                    </div>
+                </div>
+            </div>
+            <div class="laptop-base"></div>
+            <h3 class="mockup-title">Success Confirmation</h3>
+            <p class="mockup-description">Feedback state after successful form submission</p>
+        </div>
+    </div>
+
+    <footer>
+        Generated by <span>Blueprint Brain</span>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', currentTheme === 'light' ? 'dark' : 'light');
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.mockup-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Add staggered animation delays
+        document.querySelectorAll('.mockup-card').forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>

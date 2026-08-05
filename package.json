@@ -1,12 +1,13 @@
 {
-  "name": "ibm.github.io",
-  "description": "ibm.github.io",
-  "author": "IBM",
-  "version": "0.0.1",
-  "devDependencies": {
-    "jshint": "^2.9.5"
-  },
+  "name": "ibm",
+  "version": "1.0.0",
+  "description": "Project dependencies and scripts",
+  "main": "index.js",
   "scripts": {
-    "test": "jshint orgs.js"
-  }
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
+  "dependencies": {},
+  "devDependencies": {}
 }
